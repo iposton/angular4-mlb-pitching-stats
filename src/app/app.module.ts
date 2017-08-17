@@ -10,9 +10,11 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 
 export const firebaseConfig = {
+
     apiKey: API_KEY,
     authDomain: AUTH_DOM,
     databaseURL: FIREBASE_URL
+    
 };
 import {
   MdButtonModule,
