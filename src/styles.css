@@ -1,1 +1,36 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+body {
+    padding: 1em 0em;
+    background:lightgray;
+    font-family: Roboto, Arial, sans-serif;
+}
+
+my-dialog img {
+  width: 50%;
+  display: inline-block;
+  /*border-radius: 10%;*/
+  /*border: #3F51B5 solid 2px;*/
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  margin: 5px 5px 0 5px;
+}
+
+my-dialog .fav-pitch {
+  background: #d35400;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  color: #fff;
+  border-radius: 4px;
+  text-align: center;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  margin-bottom: 15px;
+}
+
+.mat-dialog-container {
+  width: 600px;
+}
+
+my-dialog p {
+  font-family: Monospace;
+  line-height: 1.4em
+}
