@@ -12,7 +12,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist/index.html'))
 });
 
-app.get('/config.js', function(req, res){
+app.get('/main.bundle.js', function(req, res){
        
        res.write("let FIREBASE_URL='"+process.env.FIREBASE_URL+"'" + '\n');
        res.write("let API_KEY='"+process.env.API_KEY+"'" + '\n');
