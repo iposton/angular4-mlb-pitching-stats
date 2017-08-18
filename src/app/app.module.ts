@@ -9,12 +9,14 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 
+this.http.get('/heroku-vars');
+
 export const firebaseConfig = {
 
     apiKey: API_KEY,
     authDomain: AUTH_DOM,
     databaseURL: FIREBASE_URL
-    
+
 };
 import {
   MdButtonModule,

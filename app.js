@@ -6,11 +6,21 @@ const api = require('./server/routes/api');
 
 const app = express();
 
+app.get('/heroku-vars', function(req, res){
+       
+       res.write("let FIREBASE_URL='"+process.env.FIREBASE_URL+"'" + '\n');
+       res.write("let API_KEY='"+process.env.API_KEY+"'" + '\n');
+       res.write("let AUTH_DOM='"+process.env.AUTH_DOM+"'" + '\n');
+       res.write("let TOKEN='"+process.env.PP_API_KEY+"'" + '\n');
+       res.end();
+});
+
 app.use(express.static(path.join(__dirname, 'dist')));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist/index.html'))
 });
+
 
 const port = process.env.PORT || '3001';
 app.set('port', port);

@@ -18,6 +18,11 @@ export class InfoService{
   gameid:Observable<any> = null;
 
   constructor(private http:Http){}
+  getVars() {
+    this.http.get('/heroku-vars');
+    console.log(TOKEN, 'from heroku');
+  }
+  
   
   clearCache(){
     this.info = null;
