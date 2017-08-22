@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const Heroku = require('heroku-client')
-const heroku = new Heroku({ token: '021d54f5-5a75-42c5-be2b-7bd9ece68c19' })
+const heroku = new Heroku({ token: process.env.API_TOKEN })
 
 const api = require('./server/routes/api');
 
@@ -21,7 +21,7 @@ heroku.request({
   path: 'https://api.heroku.com/apps/mlb-pitching-stats/config-vars',
   headers: {
     "Accept": "application/vnd.heroku+json; version=3",
-    "Authorization": "Bearer 021d54f5-5a75-42c5-be2b-7bd9ece68c19"
+    "Authorization": "Bearer "+process.env.API_TOKEN
   },
   parseJSON: true
 }).then(response => {
