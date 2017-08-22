@@ -1,23 +1,10 @@
+import { masterFirebaseConfig } from './api-keys';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule , APP_INITIALIZER } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { AngularFireModule } from 'angularfire2';
 
-// New imports to update based on AngularFire2 version 4
-import { AngularFireDatabaseModule } from 'angularfire2/database';
-import { AngularFireAuthModule } from 'angularfire2/auth';
-
-this.http.get('/heroku-vars');
-
-export const firebaseConfig = {
-
-    apiKey: API_KEY,
-    authDomain: AUTH_DOM,
-    databaseURL: FIREBASE_URL
-
-};
 import {
   MdButtonModule,
   MdCardModule,
@@ -61,6 +48,20 @@ import { OrderBy } from './orderby.pipe';
 import {InfoService} from './info.service';
 import {FirebaseService} from './firebase.service';
 
+import { AngularFireModule } from 'angularfire2';
+
+// New imports to update based on AngularFire2 version 4
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from 'angularfire2/auth';
+
+
+export const firebaseConfig = {
+  apiKey: masterFirebaseConfig.apiKey,
+  authDomain: masterFirebaseConfig.authDomain,
+  databaseURL: masterFirebaseConfig.databaseURL,
+  storageBucket: masterFirebaseConfig.storageBucket
+};
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -72,7 +73,6 @@ import {FirebaseService} from './firebase.service';
     FormsModule,
     HttpModule,
     BrowserAnimationsModule,
-    AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
     AngularFireAuthModule,
     MdButtonModule,
@@ -108,7 +108,8 @@ import {FirebaseService} from './firebase.service';
     MdTabsModule,
     MdToolbarModule,
     MdTooltipModule,
-    CdkTableModule
+    CdkTableModule,
+    AngularFireModule.initializeApp(firebaseConfig),
   ],
   providers: [InfoService, FirebaseService],
   entryComponents: [
@@ -116,4 +117,5 @@ import {FirebaseService} from './firebase.service';
   ],
   bootstrap: [AppComponent]
 })
+
 export class AppModule {}

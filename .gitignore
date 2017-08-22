@@ -8,6 +8,11 @@
 # dependencies
 /node_modules
 
+#Firebase credentials
+/src/app/api-keys.ts 
+
+/src/app/dist/
+
 # IDEs and editors
 /.idea
 .project

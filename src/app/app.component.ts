@@ -37,6 +37,7 @@ export class AppComponent {
   speedResults: Array < any > = [];
 
   stat: string = '';
+  defineToken: string = '';
   displayedColumns = [
     'id',
     'pitches',
@@ -54,8 +55,19 @@ export class AppComponent {
   @ViewChild(MdSort) sort: MdSort;
 
   constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http) {}
+  
+loadEnv() {
+  this.infoService
+      .getEnv().subscribe(res => {
+        //console.log(res._body, 'res from express server!');
+        this.defineToken = res._body;
+        this.loadData(this.defineToken);
+      })
+   }
+  
+  loadData(token) {
+   
 
-  loadData() {
      //THESE FUNCTIONS GET DATA FROM FIREBASE AND THEN GROUPS DATA BASED BY PLAYER ID       
     this.firebaseService.getFastballData().subscribe(x => {
 
@@ -86,13 +98,13 @@ export class AppComponent {
     });
 
     this.infoService
-      .getInfo().subscribe(res => {
+      .getInfo(token).subscribe(res => {
         console.log(res, 'got player info res from cache I think!');
         this.playerInfo = res['activeplayers'].playerentry;
       });
     //THESE FUNCTIONS GET PLAYER INFO AND CREATE CUSTOM PLAYER VALUES BARROWED FROM SEPARATE API CALL
     this.infoService
-      .getStats().subscribe(res => {
+      .getStats(token).subscribe(res => {
         console.log(res, 'got res!');
 
         this.myData = res['cumulativeplayerstats'].playerstatsentry;
@@ -150,7 +162,7 @@ export class AppComponent {
 
     //THESE FUNCTIONS WORK TOGETHER TO MAKE MULTIPLE API CALLS AND PUSH IT ALL TO FIREBASE
     // this.infoService
-    //   .getGameId().subscribe(res => {
+    //   .getGameId(token).subscribe(res => {
     //     console.log(res, 'gameID data!');
     //     //this.gameIdData = res['fullgameschedule'].gameentry;
 
@@ -185,7 +197,7 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    this.loadData();
+    this.loadEnv();
   }
 
   public open(event, data) {
