@@ -34,3 +34,7 @@ my-dialog p {
   font-family: Monospace;
   line-height: 1.4em
 }
+
+my-dialog .more-stats-btn {
+  margin-bottom: 8px;
+}

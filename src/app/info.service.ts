@@ -12,6 +12,8 @@ export class InfoService{
   stats:Observable<any> = null;
   env:Observable<any> = null;
   gameid:Observable<any> = null;
+  daily:Observable<any> = null;
+
 
   constructor(private http:Http){}
 
@@ -21,6 +23,8 @@ export class InfoService{
     this.env = this.http.get('/heroku-env').map(response => response)
     return this.env;
   }
+
+
   
   
   clearCache(){
@@ -28,7 +32,6 @@ export class InfoService{
   }
   
   getInfo(token) {
-    
 
     if(!this.info) {
      let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + token) });
@@ -62,11 +65,32 @@ export class InfoService{
     console.log('getting pitch speed data from API...');
     let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + token) });
     let options = new RequestOptions({ headers: headers });
-    let url4 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/full_game_schedule.json?date=from-8-days-ago-to-6-days-ago';
-    this.gameid = this.http.get(url4, options)
+    let url3 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/full_game_schedule.json?date=from-8-days-ago-to-6-days-ago';
+    this.gameid = this.http.get(url3, options)
     .map(response => response.json())
    }
    return this.gameid;
+  }
+
+    getDaily(token) {
+
+     if(!this.daily) {
+     let thisDate = new Date();
+     let utcDate = new Date(thisDate.toUTCString());
+     utcDate.setHours(utcDate.getHours()-8);
+     //let usDate = new Date(utcDate);
+     let myDate = new Date(utcDate);
+     let dailyDate = myDate.toISOString().slice(0,10).replace(/-/g,"");
+     console.log(dailyDate, 'daily date..');
+     let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + token) });
+     let options = new RequestOptions({ headers: headers });
+     let url4 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/daily_player_stats.json?fordate='+dailyDate+'&position=P';
+      console.log('getting daily stats for pitchers from API...');
+      this.daily = this.http.get(url4, options)
+      .map(response => response.json())
+      
+    }
+    return this.daily;
   }
 
 

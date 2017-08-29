@@ -1,130 +1,81 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<md-toolbar color="primary">
-  <span>PitchingStats | Avoid Tommy John</span>
+<div class="spinner-msg" *ngIf="loading">
+  Retrieving pitching data...
+  <md-spinner></md-spinner>
+</div>
+<md-toolbar color="primary" *ngIf="!loading">
+  <span>MLB Pitching Stats</span>
   <span class="example-spacer"></span>
-  <button md-button [mdMenuTriggerFor]="appMenu">
-    <md-icon>menu</md-icon> Menu</button>
+  <!-- <button md-button [mdMenuTriggerFor]="appMenu">
+    <md-icon>menu</md-icon> Menu</button> -->
 </md-toolbar>
-<md-menu #appMenu="mdMenu">
-  <button md-menu-item> Settings </button>
-  <button md-menu-item> Help </button>
-</md-menu>
-<!-- <div *ngFor="let data of statData; let i=index"> -->
-  <!-- <md-card class="example-card" *ngIf="data.stats.PitchesThrown['#text'] > 0"> -->
-    <!-- <md-card-header>
-      <md-card-title><b>{{i+1}}.</b> <img src="{{ data.player.image }}"> {{ data.player.FirstName + ' ' + data.player.LastName + ' (' + data.team.Name + ' - ' + data.player.Position + ')'}}</md-card-title>
-    </md-card-header> -->
-  <!--   <md-grid-list md-cols="12">
-      <md-grid-tile md-colspan="6"> 
-        <md-list>
-          <md-list-item [ngClass]="{'active': stat === data.stats.PitchesThrown['@abbreviation']}" (click)="open($event, data.stats.PitchesThrown['@abbreviation'])">Pitch Count: {{data.stats.PitchesThrown['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.PitcherStrikeouts['@abbreviation']}" (click)="open($event, data.stats.PitcherStrikeouts['@abbreviation'])">Strike Outs: {{data.stats.PitcherStrikeouts['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.InningsPitched['@abbreviation']}" (click)="open($event, data.stats.InningsPitched['@abbreviation'])">InningsPitched: {{data.stats.InningsPitched['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.BattersHit['@abbreviation']}" (click)="open($event, data.stats.BattersHit['@abbreviation'])">Batters hit: {{data.stats.BattersHit['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.PitcherWildPitches['@abbreviation']}" (click)="open($event, data.stats.PitcherWildPitches['@abbreviation'])">Wild Pitch: {{data.stats.PitcherWildPitches['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.PitcherWalks['@abbreviation']}" (click)="open($event, data.stats.PitcherWalks['@abbreviation'])">Walks: {{data.stats.PitcherWalks['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.WalksAllowedPer9Innings['@abbreviation']}" (click)="open($event, data.stats.WalksAllowedPer9Innings['@abbreviation'])">Walks Per 9innings: {{data.stats.WalksAllowedPer9Innings['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.StrikeoutsPer9Innings['@abbreviation']}" (click)="open($event, data.stats.StrikeoutsPer9Innings['@abbreviation'])">Strikeouts Per 9innings: {{data.stats.StrikeoutsPer9Innings['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.PitchesPerInning['@abbreviation']}" (click)="open($event, data.stats.PitchesPerInning['@abbreviation'])">Pitches Per inning: {{data.stats.PitchesPerInning['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.EarnedRunAvg['@abbreviation']}" (click)="open($event, data.stats.EarnedRunAvg['@abbreviation'])">Earned Run Avg: {{data.stats.EarnedRunAvg['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.EarnedRunsAllowed['@abbreviation']}" (click)="open($event, data.stats.EarnedRunsAllowed['@abbreviation'])">Earned Runs Allowed: {{data.stats.EarnedRunsAllowed['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.HitsAllowed['@abbreviation']}" (click)="open($event, data.stats.HitsAllowed['@abbreviation'])">HitsAllowed: {{data.stats.HitsAllowed['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.HitsAllowedPer9Innings['@abbreviation']}" (click)="open($event, data.stats.HitsAllowedPer9Innings['@abbreviation'])">HitsAllowedPer9Innings: {{data.stats.HitsAllowedPer9Innings['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.HomerunsAllowed['@abbreviation']}" (click)="open($event, data.stats.HomerunsAllowed['@abbreviation'])">HomerunsAllowed: {{data.stats.HomerunsAllowed['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.PickoffAttempts['@abbreviation']}" (click)="open($event, data.stats.PickoffAttempts['@abbreviation'])">PickoffAttempts: {{data.stats.PickoffAttempts['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.Pickoffs['@abbreviation']}" (click)="open($event, data.stats.Pickoffs['@abbreviation'])">Pickoffs: {{data.stats.Pickoffs['#text']}}</md-list-item>
-        </md-list>
-      </md-grid-tile> 
-     <md-grid-tile md-colspan="6"> 
-        <md-list>
-          <md-list-item [ngClass]="{'active': stat === data.stats.Pitcher2SeamFastballs['@abbreviation']}" (click)="open($event, data.stats.Pitcher2SeamFastballs['@abbreviation'])">Pitcher2SeamFastballs: {{data.stats.Pitcher2SeamFastballs['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.Pitcher4SeamFastballs['@abbreviation']}" (click)="open($event, data.stats.Pitcher4SeamFastballs['@abbreviation'])">Pitcher4SeamFastballs: {{data.stats.Pitcher4SeamFastballs['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.PitcherChangeups['@abbreviation']}" (click)="open($event, data.stats.PitcherChangeups['@abbreviation'])">PitcherChangeups: {{data.stats.PitcherChangeups['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.PitcherCurveballs['@abbreviation']}" (click)="open($event, data.stats.PitcherCurveballs['@abbreviation'])">PitcherCurveballs: {{data.stats.PitcherCurveballs['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.PitcherCutters['@abbreviation']}" (click)="open($event, data.stats.PitcherCutters['@abbreviation'])">PitcherCutters: {{data.stats.PitcherCutters['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.PitcherSliders['@abbreviation']}" (click)="open($event, data.stats.PitcherSliders['@abbreviation'])">PitcherSliders: {{data.stats.PitcherSliders['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.PitcherSinkers['@abbreviation']}" (click)="open($event, data.stats.PitcherSinkers['@abbreviation'])">PitcherSinkers: {{data.stats.PitcherSinkers['#text']}}</md-list-item>
-          <md-list-item [ngClass]="{'active': stat === data.stats.PitcherSplitters['@abbreviation']}" (click)="open($event, data.stats.PitcherSplitters['@abbreviation'])">PitcherSplitters: {{data.stats.PitcherSplitters['#text']}}</md-list-item>
-        </md-list>
-      </md-grid-tile>
-    </md-grid-list> -->
-   <div class="example-container mat-elevation-z8">
-  <md-table #table [dataSource]="dataSource" mdSort>  
-
+<!--  <md-menu #appMenu="mdMenu">
+    <button md-menu-item> Settings </button>
+    <button md-menu-item> Help </button>
+  </md-menu> -->
+<!-- <md-list>
+  <md-list-item>Earned Runs Allowed: {{data.stats.EarnedRunsAllowed['#text']}}</md-list-item>
+  <md-list-item>HitsAllowed: {{data.stats.HitsAllowed['#text']}}</md-list-item>
+  <md-list-item>HomerunsAllowed: {{data.stats.HomerunsAllowed['#text']}}</md-list-item>
+</md-list> -->
+<div class="example-container mat-elevation-z8">
+  <md-table #table [dataSource]="dataSource" mdSort>
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
-
     <!-- Rank Column -->
     <ng-container cdkColumnDef="id">
-      <md-header-cell *cdkHeaderCellDef> Rank </md-header-cell>
-      <md-cell *cdkCellDef="let i=index; let data;"> <b>{{i+1}}. </b>{{ data.player.FirstName + ' ' + data.player.LastName + ' - ' + data.team.Abbreviation}}  
+      <md-header-cell *cdkHeaderCellDef> Rank &nbsp;&nbsp; <span *ngIf="dailyStats != undefined" class="live-case">(&nbsp;</span><span class="live-case" *ngIf="dailyStats != undefined">live stats</span>&nbsp; <div class="live-dot" *ngIf="dailyStats != undefined"></div> <span *ngIf="dailyStats != undefined" class="live-case">)</span> </md-header-cell>
+      <md-cell *cdkCellDef="let i=index; let data;"> <b>{{i+1}}. </b>{{ data.player.FirstName + ' ' + data.player.LastName + ' - ' + data.team.Abbreviation}}
+        <div *ngIf="data.player.playingToday" class="big-live-dot"></div>
       </md-cell>
     </ng-container>
-
     <!-- Pitches Column -->
     <ng-container cdkColumnDef="pitches">
       <md-header-cell *cdkHeaderCellDef md-sort-header> Pitch Count </md-header-cell>
-      <md-cell *cdkCellDef="let data">{{data.stats.PitchesThrown['#text']}}  </md-cell>
+      <md-cell *cdkCellDef="let data">{{data.stats.PitchesThrown['#text']}} </md-cell>
     </ng-container>
-
     <!-- StrikeOuts Column -->
-     <ng-container cdkColumnDef="strikeouts">
+    <ng-container cdkColumnDef="strikeouts">
       <md-header-cell *cdkHeaderCellDef md-sort-header> Strike Outs </md-header-cell>
-      <md-cell *cdkCellDef="let data">{{data.stats.PitcherStrikeouts['#text']}}  </md-cell>
+      <md-cell *cdkCellDef="let data">{{data.stats.PitcherStrikeouts['#text']}} </md-cell>
     </ng-container>
-
-      <!-- PitcherWalks Column -->
+    <!-- PitcherWalks Column -->
     <ng-container cdkColumnDef="pitcherWalks">
       <md-header-cell *cdkHeaderCellDef md-sort-header> Pitcher Walks </md-header-cell>
-      <md-cell *cdkCellDef="let data">  
-      {{data.stats.PitcherWalks['#text']}}
+      <md-cell *cdkCellDef="let data">
+        {{data.stats.PitcherWalks['#text']}}
       </md-cell>
     </ng-container>
-      
     <!-- InningsPitched Column -->
-     <ng-container cdkColumnDef="inningsPitched">
+    <ng-container cdkColumnDef="inningsPitched">
       <md-header-cell *cdkHeaderCellDef md-sort-header> Innings Pitched </md-header-cell>
       <md-cell *cdkCellDef="let data">{{data.stats.InningsPitched['#text']}}</md-cell>
     </ng-container>
-
-      <!-- pitchesPerInning Column -->
+    <!-- pitchesPerInning Column -->
     <ng-container cdkColumnDef="pitchesPerInning">
       <md-header-cell *cdkHeaderCellDef md-sort-header> Pitches Per Inning </md-header-cell>
-      <md-cell *cdkCellDef="let data">  
-      {{data.stats.PitchesPerInning['#text']}}
+      <md-cell *cdkCellDef="let data">
+        {{data.stats.PitchesPerInning['#text']}}
       </md-cell>
     </ng-container>
-
-     <!-- BattersHit Column -->
-     <!-- <ng-container cdkColumnDef="battersHit">
+    <!-- BattersHit Column -->
+    <!-- <ng-container cdkColumnDef="battersHit">
       <md-header-cell *cdkHeaderCellDef md-sort-header> Batters Hit </md-header-cell>
       <md-cell *cdkCellDef="let data">{{data.stats.BattersHit['#text']}}</md-cell>
     </ng-container> -->
-
     <!-- PitcherWildPitches Column -->
-     <ng-container cdkColumnDef="pitcherWildPitches">
+    <ng-container cdkColumnDef="pitcherWildPitches">
       <md-header-cell *cdkHeaderCellDef md-sort-header> Wild Pitches </md-header-cell>
       <md-cell *cdkCellDef="let data">{{data.stats.PitcherWildPitches['#text']}}</md-cell>
     </ng-container>
-
-     <!-- PickoffAttempts Column -->
+    <!-- PickoffAttempts Column -->
     <ng-container cdkColumnDef="pickoffAttempts">
       <md-header-cell *cdkHeaderCellDef md-sort-header> Pickoff Attempts </md-header-cell>
-      <md-cell *cdkCellDef="let data">  
-      {{data.stats.PickoffAttempts['#text']}}
+      <md-cell *cdkCellDef="let data">
+        {{data.stats.PickoffAttempts['#text']}}
       </md-cell>
     </ng-container>
-   
-
-    <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+    <md-header-row *cdkHeaderRowDef="displayedColumns" [ngClass]="loading ? 'loading' : 'notLoading'"></md-header-row>
     <md-row (click)="open($event, data)" *cdkRowDef="let data; columns: displayedColumns; let i=index;"></md-row>
-  
-
   </md-table>
-  
- 
-  
-
 </div>
-  <!-- </md-card> -->
-<!-- </div> -->

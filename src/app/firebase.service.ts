@@ -3,9 +3,6 @@ import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/databa
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
-import 'rxjs/add/operator/map';
-
-
 
 @Injectable()
 export class FirebaseService {
@@ -13,8 +10,7 @@ export class FirebaseService {
   items:FirebaseListObservable<any[]>;
 
   constructor(public af: AngularFireDatabase) {
-    //this.albums = database.list('albums');
-    this.items = af.list('/games');
+    //this.items = af.list('/games') 
   }
 
   // addData(fastBallData) {
@@ -28,7 +24,8 @@ export class FirebaseService {
   // }
 
   getFastballData() {
-    return this.items;
+    //console.log('getting fastball data from firebase...', this.items);
+    return  this.items = this.af.list('/games')
   }
 }
  

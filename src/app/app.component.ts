@@ -1,5 +1,6 @@
 import { Component, ViewChild, Inject } from '@angular/core';
 import { MdDialog } from '@angular/material';
+import { MdDialogRef } from "@angular/material";
 import { MD_DIALOG_DATA } from '@angular/material';
 import { DataSource } from '@angular/cdk';
 import { MdPaginator } from '@angular/material';
@@ -30,11 +31,13 @@ export class AppComponent {
   myData: Array < any > ;
   playerInfo: Array < any > ;
   statData: Array < any > ;
+  dailyStats: Array < any > ;
   fastballData: Array < any > ;
   gameIdData: Array < any > ;
   specificFastballData: Array < any > = [];
   specificFastballDataById: Array < any > = [];
   speedResults: Array < any > = [];
+  loading: boolean = true;
 
   stat: string = '';
   defineToken: string = '';
@@ -59,18 +62,16 @@ export class AppComponent {
 loadEnv() {
   this.infoService
       .getEnv().subscribe(res => {
-        //console.log(res._body, 'res from express server!');
         this.defineToken = res._body;
-        this.loadData(this.defineToken);
+        
       })
-   }
-  
-  loadData(token) {
-   
 
-     //THESE FUNCTIONS GET DATA FROM FIREBASE AND THEN GROUPS DATA BASED BY PLAYER ID       
-    this.firebaseService.getFastballData().subscribe(x => {
-
+         //THESE FUNCTIONS GET DATA FROM FIREBASE AND THEN GROUPS DATA BASED BY PLAYER ID       
+    this.firebaseService
+      .getFastballData()
+      .subscribe(x => {
+        console.log('got response from fb....');
+        this.loadData(this.defineToken);
       this.fastballData = x;
       for (let fb of this.fastballData) {
         for (let f of fb.atBatPlay) {
@@ -93,21 +94,49 @@ loadEnv() {
         r[a.pitcher].push(a);
         return r
       }, Object.create(null));
-      console.log(this.speedResults, 'groups...');
+      console.log('made groups from fb data...');
 
     });
+   }
+  
+  loadData(token) {
+
+    this.infoService
+        .getDaily(token).subscribe(res => {
+         console.log(res, "Daily stats...");
+         this.dailyStats = res['dailyplayerstats'].playerstatsentry;
+      })
 
     this.infoService
       .getInfo(token).subscribe(res => {
         console.log(res, 'got player info res from cache I think!');
         this.playerInfo = res['activeplayers'].playerentry;
       });
+
     //THESE FUNCTIONS GET PLAYER INFO AND CREATE CUSTOM PLAYER VALUES BARROWED FROM SEPARATE API CALL
+
     this.infoService
       .getStats(token).subscribe(res => {
         console.log(res, 'got res!');
 
         this.myData = res['cumulativeplayerstats'].playerstatsentry;
+
+        if (this.myData && this.dailyStats) {
+          console.log('start sorting data for pictures and other info about player...');
+          for (let daily of this.dailyStats) {
+            for (let mdata of this.myData) {
+              if (daily.player.ID === mdata.player.ID) {
+                mdata.player.playingToday = true;
+                mdata.player.winToday = daily.stats.Wins['#text'];
+                mdata.player.saveToday = daily.stats.Saves['#text'];
+                mdata.player.inningsToday = daily.stats.InningsPitched['#text'];
+                mdata.player.earnedrunsToday = daily.stats.EarnedRunsAllowed['#text'];
+                mdata.player.strikeoutsToday = daily.stats.PitcherStrikeouts['#text'];
+              }
+            }
+          }
+        }
+
         if (this.myData && this.playerInfo) {
           console.log('start sorting data for pictures and other info about player...');
           for (let info of this.playerInfo) {
@@ -131,6 +160,7 @@ loadEnv() {
 
                 //This fills the table with data
                 this.dataSource = new MyDataSource(this.statData, this.sort);
+                
               }
 
             }
@@ -154,10 +184,10 @@ loadEnv() {
           }
 
         });
-
+       this.loading = false;
       });
 
-
+      
    
 
     //THESE FUNCTIONS WORK TOGETHER TO MAKE MULTIPLE API CALLS AND PUSH IT ALL TO FIREBASE
@@ -213,20 +243,22 @@ loadEnv() {
 
 @Component({
   selector: 'my-dialog',
-  template: `<md-grid-list cols="3" rowHeight="200px">
+  template: `<md-dialog-content>
+  <md-icon (click)="dialogRef.close()" style="float:right; cursor:pointer;">close</md-icon>
+</md-dialog-content>
+<md-grid-list cols="3" rowHeight="200px">
   <md-grid-tile [colspan]="1">
     <img src="{{ data.player.image }}">
   </md-grid-tile>
   <md-grid-tile [colspan]="2">
-    <p>{{ data.player.FirstName + ' ' + data.player.LastName + ' (' + data.team.Name + ' - ' + data.player.Position + ')'}}     <span *ngIf="data.player.IsRookie == 'true'" style="background:#2ecc71; color:#fff; padding:3px; border-radius:2px;">Rookie</span> <br>
-    Age: {{data.player.age}} Height: {{data.player.Height}} Weight: {{data.player.Weight}} <br>
-    Birth City: {{data.player.city +', '+ data.player.country}} <br>
-    Number: {{data.player.JerseyNumber}}</p>
-
+    <p>{{ data.player.FirstName + ' ' + data.player.LastName + ' (' + data.team.Name + ' - ' + data.player.Position + ')'}} <span *ngIf="data.player.IsRookie == 'true'" style="background:#2ecc71; color:#fff; padding:3px; border-radius:2px;">Rookie</span>
+      <br> Age: {{data.player.age}} Height: {{data.player.Height}} Weight: {{data.player.Weight}}
+      <br> Birth City: {{data.player.city +', '+ data.player.country}}
+      <br> Number: {{data.player.JerseyNumber}}</p>
   </md-grid-tile>
 </md-grid-list>
 <md-grid-list cols="3" rowHeight="50px">
-<md-grid-tile [colspan]="1">
+  <md-grid-tile [colspan]="1">
     <h1><b>W-L:</b> {{ data.stats.Wins['#text'] +'-'+ data.stats.Losses['#text'] }}</h1>
   </md-grid-tile>
   <md-grid-tile [colspan]="1">
@@ -236,44 +268,33 @@ loadEnv() {
     <h1><b>K's:</b> {{ data.stats.PitcherStrikeouts['#text'] }}</h1>
   </md-grid-tile>
 </md-grid-list>
-
-   
-        
-
-          <div class="fav-pitch">
-
-          <h2 *ngIf="data.player.favPitch == data.stats.Pitcher2SeamFastballs['#text']">Uses the 2-Seam Fastball {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-          <h2 *ngIf="data.player.favPitch == data.stats.Pitcher4SeamFastballs['#text']">Uses the 4-Seam Fastball {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-          <h2 *ngIf="data.player.favPitch == data.stats.PitcherChangeups['#text']">Uses the Changeup {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-          <h2 *ngIf="data.player.favPitch == data.stats.PitcherCurveballs['#text']">Uses the Curveball {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-          <h2 *ngIf="data.player.favPitch == data.stats.PitcherCutters['#text']">Uses the Cutter {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-          <h2 *ngIf="data.player.favPitch == data.stats.PitcherSliders['#text']">Uses the Slider {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-          <h2 *ngIf="data.player.favPitch == data.stats.PitcherSinkers['#text']">Uses the Sinker {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-          <h2 *ngIf="data.player.favPitch == data.stats.PitcherSplitters['#text']">Uses the Splitter {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-          
-          </div>
-          <div class="fav-pitch" *ngIf="data.player.pitchSpeedAvg">
-          <h2>Avg pitch speed is {{data.player.pitchSpeedAvg}}mph</h2>
-          </div>
-          
-
-<md-dialog-content>
-
-
- <md-list>
-      
-
-          <md-list-item>Earned Runs Allowed: {{data.stats.EarnedRunsAllowed['#text']}}</md-list-item>
-          <md-list-item>HitsAllowed: {{data.stats.HitsAllowed['#text']}}</md-list-item>
-          <md-list-item>HomerunsAllowed: {{data.stats.HomerunsAllowed['#text']}}</md-list-item>
-         
-          
-        </md-list>
-</md-dialog-content>`,
+<div class="fav-pitch">
+  <h2 *ngIf="data.player.favPitch == data.stats.Pitcher2SeamFastballs['#text']">Uses the 2-Seam Fastball {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.Pitcher4SeamFastballs['#text']">Uses the 4-Seam Fastball {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.PitcherChangeups['#text']">Uses the Changeup {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.PitcherCurveballs['#text']">Uses the Curveball {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.PitcherCutters['#text']">Uses the Cutter {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.PitcherSliders['#text']">Uses the Slider {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.PitcherSinkers['#text']">Uses the Sinker {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.PitcherSplitters['#text']">Uses the Splitter {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+</div>
+<div class="fav-pitch" *ngIf="data.player.pitchSpeedAvg">
+  <h2>Avg pitch speed is {{data.player.pitchSpeedAvg}}mph</h2>
+</div>
+<div class="fav-pitch" *ngIf="data.player.winToday == '1'">
+  <h2>{{ data.player.FirstName + ' ' + data.player.LastName}} got a Win today!</h2>
+</div>
+<div class="fav-pitch" *ngIf="data.player.saveToday == '1'">
+  <h2>{{ data.player.FirstName + ' ' + data.player.LastName}} got a Save today!</h2>
+</div>
+<div class="fav-pitch" *ngIf="data.player.winToday == '0' && data.player.saveToday == '0'">
+  <h2>{{ data.player.FirstName + ' ' + data.player.LastName}} pitched {{data.player.inningsToday}} innings, {{data.player.strikeoutsToday}} strikeouts and gave up {{data.player.earnedrunsToday}} runs today!</h2>
+  <button md-button class="more-stats-btn">MORE STATS</button>
+</div>`,
 })
 
 export class MyDialog {
-  constructor(@Inject(MD_DIALOG_DATA) public data: any) {}
+  constructor(public dialogRef: MdDialogRef<MyDialog>, @Inject(MD_DIALOG_DATA) public data: any) {}
 }
 
 export class MyDataSource extends DataSource < Data > {
@@ -294,16 +315,6 @@ export class MyDataSource extends DataSource < Data > {
     ];
 
     return Observable.merge(...displayDataChanges).map(() => {
-      // const data = this.datas.slice();
-
-      // //console.log(data, 'merge');
-      // // Grab the page's slice of data.
-      // const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-      // const finalData = data.splice(startIndex, this.paginator.pageSize);
-      // //finalData.myIndex = data.push(startIndex, this.paginator.pageSize)
-
-      // console.log(finalData, 'finalData')
-      // return finalData;
       return this.getSortedData();
     });
   }
