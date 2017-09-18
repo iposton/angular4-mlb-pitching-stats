@@ -1,0 +1,8 @@
+img {
+  width: 10%;
+  display: inline-block;
+  /*border-radius: 10%;*/
+  /*border: #3F51B5 solid 2px;*/
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  margin: 5px 5px 0 5px;
+}

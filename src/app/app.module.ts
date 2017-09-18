@@ -4,6 +4,7 @@ import { NgModule , APP_INITIALIZER } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { RouterModule } from '@angular/router';
 
 import {
   MdButtonModule,
@@ -43,7 +44,7 @@ import 'rxjs/add/operator/map'
 import { CdkTableModule } from '@angular/cdk';
 
 
-import { AppComponent, MyDialog } from './app.component';
+import { AppComponent } from './app.component';
 import { OrderBy } from './orderby.pipe';
 import {InfoService} from './info.service';
 import {FirebaseService} from './firebase.service';
@@ -53,6 +54,8 @@ import { AngularFireModule } from 'angularfire2';
 // New imports to update based on AngularFire2 version 4
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
+import { PlayerComponent } from './player/player.component';
+import { PitchingStatsComponent, MyDialog } from './pitching-stats/pitching-stats.component';
 
 
 export const firebaseConfig = {
@@ -66,7 +69,9 @@ export const firebaseConfig = {
   declarations: [
     AppComponent,
     MyDialog,
-    OrderBy
+    OrderBy,
+    PlayerComponent,
+    PitchingStatsComponent
   ],
   imports: [
     BrowserModule,
@@ -110,6 +115,22 @@ export const firebaseConfig = {
     MdTooltipModule,
     CdkTableModule,
     AngularFireModule.initializeApp(firebaseConfig),
+    RouterModule.forRoot([
+         {
+          path: '',
+          redirectTo: 'pitching-stats',
+          pathMatch: 'full'
+        },
+        {
+          path: 'daily-stats/:id',
+          component: PlayerComponent,
+          
+        },
+        {
+          path: 'pitching-stats',
+          component: PitchingStatsComponent
+        }
+    ])
   ],
   providers: [InfoService, FirebaseService],
   entryComponents: [
