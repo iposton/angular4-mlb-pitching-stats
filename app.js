@@ -8,10 +8,8 @@ const api = require('./server/routes/api');
 
 const app = express();
 
-let API_KEY = '',
-AUTH_DOM = '',
-TOKEN = '',
-FIREBASE_URL = '';
+let TOKEN = '';
+
 
 app.use(express.static(path.join(__dirname, 'dist')));
 
@@ -26,10 +24,7 @@ heroku.request({
   parseJSON: true
 }).then(response => {
   //console.log(response.API_KEY, "heroku api from server");
-  API_KEY = response.API_KEY;
-  AUTH_DOM = response.AUTH_DOM;
   TOKEN = response.TOKEN;
-  FIREBASE_URL = response.FIREBASE_URL;
 })
 
 app.get('/heroku-env', function(req, res){
@@ -37,10 +32,6 @@ app.get('/heroku-env', function(req, res){
         res.end();
 });
 
-app.get('/heroku-env-firebase', function(req, res){
-        res.write(FIREBASE_URL);
-        res.end();
-});
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist/index.html'))
