@@ -27,6 +27,7 @@ export interface Data {}
 export class PitchingStatsComponent implements OnInit {
 
   title = 'app';
+  players: Array<any> ;
   myData: Array < any > ;
   playerInfo: Array < any > ;
   statData: Array < any > ;
@@ -39,6 +40,7 @@ export class PitchingStatsComponent implements OnInit {
   specificFastballDataById: Array < any > = [];
   speedResults: Array < any > = [];
   loading: boolean = true;
+  live: boolean = false;
 
   stat: string = '';
   defineToken: string = '';
@@ -58,9 +60,10 @@ export class PitchingStatsComponent implements OnInit {
   //@ViewChild(MdPaginator) paginator: MdPaginator;
   @ViewChild(MdSort) sort: MdSort;
 
-  constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http) {}
+  constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http) {this.players = this.infoService.getSentStats();}
 
   loadEnv() {
+    
     this.infoService
       .getEnv().subscribe(res => {
         this.defineToken = res._body;
@@ -125,35 +128,10 @@ export class PitchingStatsComponent implements OnInit {
         //     });
         //          this.loadData(this.defineToken);
         //   });
-
-
-      })
-
-
-
-    this.firebaseService
-      .getFastballData()
-      .subscribe(x => {
-        console.log(x, 'got response from fb....');
-        this.loadData(this.defineToken);
-        this.fastballData = x;
-      });
-
-  }
-
-  loadData(token) {
-
-    let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + token) });
-    let options = new RequestOptions({ headers: headers });
-
-    this.infoService
-      .getDaily(token).subscribe(res => {
-        console.log(res, "Daily stats...");
-        this.dailyStats = res['dailyplayerstats'].playerstatsentry;
-      })
-
-    this.infoService
-      .getDailySchedule(token).subscribe(res => {
+          this.infoService
+      .getDailySchedule(this.defineToken).subscribe(res => {
+        let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + this.defineToken) });
+        let options = new RequestOptions({ headers: headers });
         console.log(res, "schedule...");
         this.dailySchedule = res['dailygameschedule'].gameentry;
 
@@ -189,8 +167,40 @@ export class PitchingStatsComponent implements OnInit {
             });
 
           });
+          this.loadData(this.defineToken);
       })
 
+
+      })
+
+
+
+    this.firebaseService
+      .getFastballData()
+      .subscribe(x => {
+        console.log(x, 'got response from fb....');
+        //this.loadData(this.defineToken);
+        this.fastballData = x;
+      });
+
+
+
+
+
+
+  }
+
+  loadData(token) {
+
+   
+
+    this.infoService
+      .getDaily(token).subscribe(res => {
+        console.log(res, "Daily stats...");
+        this.dailyStats = res['dailyplayerstats'].playerstatsentry;
+      })
+
+    
     this.infoService
       .getInfo(token).subscribe(res => {
         console.log(res, 'got player info res from cache I think!');
@@ -337,9 +347,28 @@ export class PitchingStatsComponent implements OnInit {
 
 
   }
+  
+  
 
   ngOnInit() {
-    this.loadEnv();
+    if (this.players === undefined) {
+      this.loadEnv();
+    } else {
+      //this.loading = false;
+      //This fills the table with data
+      this.dataSource = new MyDataSource(this.players, this.sort);
+
+      setInterval (() => {
+        this.loading = false;
+      }, 300)
+
+      for (let p of this.players) { 
+        if (p.player.playingToday) {
+          this.live = true;
+        }
+      }
+      
+    }  
   }
 
   public open(event, data) {
@@ -420,8 +449,11 @@ export class MyDialog {
 }
 
 export class MyDataSource extends DataSource < Data > {
+   
+
   //console.log(Data[], 'data[]');
   constructor(private datas: Data[], private sort: MdSort) {
+
     super();
 
   }
@@ -486,6 +518,8 @@ export class MyDataSource extends DataSource < Data > {
 
       return (valueA < valueB ? -1 : 1) * (this.sort.direction == 'asc' ? 1 : -1);
     });
+
+    
   }
 
 }

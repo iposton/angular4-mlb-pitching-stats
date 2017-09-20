@@ -27,9 +27,12 @@
           The actual rendered columns are set as a property on the row definition" -->
     <!-- Rank Column -->
     <ng-container cdkColumnDef="id">
-      <md-header-cell *cdkHeaderCellDef> Rank <span *ngIf="starterIdData != undefined || dailyStats != undefined" class="live-case">(&nbsp;</span><span class="live-case" *ngIf="dailyStats != undefined">live stats </span> <div class="live-dot" *ngIf="dailyStats != undefined"></div>  
+      <md-header-cell *cdkHeaderCellDef>
+     
+      Rank <span *ngIf="starterIdData != undefined || dailyStats != undefined" class="live-case">( </span><span class="live-case" *ngIf="dailyStats != undefined || live">live stats </span> <div class="live-dot" *ngIf="dailyStats != undefined || live" ></div>  
 
-     <span *ngIf="starterIdData != undefined" class="live-case">starting</span>&nbsp; <div class="live-dot-orange" *ngIf="starterIdData != undefined"></div> <span *ngIf="starterIdData != undefined || dailyStats != undefined" class="live-case">)</span>
+     <span *ngIf="starterIdData != undefined" class="live-case">starting </span> <div class="live-dot-orange" *ngIf="starterIdData != undefined"></div> <span *ngIf="starterIdData != undefined || dailyStats != undefined" class="live-case">)</span>
+     
        </md-header-cell>
       <md-cell *cdkCellDef="let i=index; let data;"> <b>{{i+1}}. </b>{{ data.player.FirstName + ' ' + data.player.LastName + ' - ' + data.team.Abbreviation}}
         <div *ngIf="data.player.playingToday" class="live-dot"></div>&nbsp;<div *ngIf="data.player.startingToday" class="live-dot-orange"></div>

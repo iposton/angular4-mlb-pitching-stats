@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRoute, Router, ActivatedRouteSnapshot } from '@angular/router';
 import { InfoService } from '../info.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -21,7 +21,7 @@ export class PlayerComponent implements OnInit {
   selectedPlayer: Observable<any> ;
   
 
-  constructor(private route: ActivatedRoute, private infoService: InfoService) {}
+  constructor(private route: ActivatedRoute, private infoService: InfoService, public router: Router, public location: Location) {}
 
 
 
@@ -44,6 +44,11 @@ export class PlayerComponent implements OnInit {
 
 
     
+  }
+
+  public goBack() {
+    this.router.navigateByUrl('/pitching-stats');
+    //this.location.go('/pitching-stats');
   }
 
 }
