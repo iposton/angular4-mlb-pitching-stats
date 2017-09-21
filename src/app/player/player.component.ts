@@ -16,9 +16,9 @@ import { Location } from '@angular/common';
 
 export class PlayerComponent implements OnInit {
 
-  players: Array<any> ;
+  players: Array<any>;
   playerId: string = '';
-  selectedPlayer: Observable<any> ;
+  selectedPlayer: Observable<any>;
   
 
   constructor(private route: ActivatedRoute, private infoService: InfoService, public router: Router, public location: Location) {}
