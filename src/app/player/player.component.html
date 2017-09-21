@@ -1,6 +1,11 @@
 <button md-button class="more-stats-btn" (click)="goBack()">GO BACK</button> <br>
+<div [ngClass]="selectedPlayer.player ? 'player-selected' : 'no-player-selected'">
+<!-- [ngClass]="loading ? 'loading' : 'notLoading'" -->
 <img src="{{ selectedPlayer.player.image }}">
-{{ selectedPlayer.player.FirstName + ' ' + selectedPlayer.player.LastName + ' (' + selectedPlayer.team.Name + ' - ' + selectedPlayer.player.Position + ')'}}
+  {{ selectedPlayer.player.FirstName + ' ' + selectedPlayer.player.LastName + ' (' + selectedPlayer.team.Name + ' - ' + selectedPlayer.player.Position + ')'}}
 
 <h1>{{ selectedPlayer.player.FirstName + ' ' + selectedPlayer.player.LastName}} is facing The {{selectedPlayer.team.opponent}} today. He threw {{selectedPlayer.player.pitchesthrownToday}} pitches today and allowed {{selectedPlayer.player.hitsallowedToday}} hits!</h1>
+</div>
+
+
 <!-- Player info here. -->
