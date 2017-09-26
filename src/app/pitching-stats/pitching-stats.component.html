@@ -34,9 +34,22 @@
      <span *ngIf="starterIdData != undefined" class="live-case">starting </span> <div class="live-dot-orange" *ngIf="starterIdData != undefined"></div> <span *ngIf="starterIdData != undefined || dailyStats != undefined" class="live-case">)</span>
      
        </md-header-cell>
-      <md-cell *cdkCellDef="let i=index; let data;"> <b>{{i+1}}. </b>{{ data.player.FirstName + ' ' + data.player.LastName + ' - ' + data.team.Abbreviation}}
+
+      <md-cell *cdkCellDef="let i=index; let data;">
+
+      <div fxHide [fxHide.gt-xs]="isVisibleOnDesktop()">
+        <b>{{i+1}}. </b>{{ data.player.FirstName + ' ' + data.player.LastName + ' - ' + data.team.Abbreviation}}
         <div *ngIf="data.player.playingToday" class="live-dot"></div>&nbsp;<div *ngIf="data.player.startingToday" class="live-dot-orange"></div>
+      </div>
+ 
+      <div fxHide [fxHide.xs]="isVisibleOnMobile()" style="font-size:8px;"> 
+        <b>{{i+1}}. </b>{{ data.player.LastName }}
+          <div *ngIf="data.player.playingToday" class="live-dot"></div>&nbsp;<div *ngIf="data.player.startingToday" class="live-dot-orange"></div>
+      </div>
+       
       </md-cell>
+
+
     </ng-container>
     <!-- Pitches Column -->
     <ng-container cdkColumnDef="pitches">
@@ -88,4 +101,6 @@
     <md-row (click)="open($event, data)" *cdkRowDef="let data; columns: displayedColumns; let i=index;"></md-row>
   </md-table>
 </div>
+
+<!-- {{ data.player.FirstName | slice:0:1 }}  -->
 

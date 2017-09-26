@@ -253,11 +253,11 @@ export class PitchingStatsComponent implements OnInit {
               for (let sdata of this.myData) {
 
                 if (schedule.awayTeam.Name === sdata.team.Name) {
-                  sdata.team.opponent = schedule.homeTeam.Name;
+                  sdata.team.opponent = schedule.homeTeam.City + ' ' + schedule.homeTeam.Name;
                   //console.log(sdata, 'opponent home team...');
                 }
                 if (schedule.homeTeam.Name === sdata.team.Name) {
-                  sdata.team.opponent = schedule.awayTeam.Name;
+                  sdata.team.opponent = schedule.awayTeam.City + ' ' + schedule.awayTeam.Name;
                   //console.log(sdata, 'opponent away team...');
                 }
               }
@@ -379,7 +379,14 @@ export class PitchingStatsComponent implements OnInit {
     });
 
 
+  }
 
+  public isVisibleOnMobile() {
+    console.log('width under 600px');
+  }
+
+  public isVisibleOnDesktop() {
+    console.log('width over 600px');
   }
 
 }
@@ -398,8 +405,8 @@ export class PitchingStatsComponent implements OnInit {
       <br> Age: {{data.player.age}} Height: {{data.player.Height}} Weight: {{data.player.Weight}}
       <br> Birth City: {{data.player.city +', '+ data.player.country}}
       <br> Number: {{data.player.JerseyNumber}}
-      <br> Opponent: <span *ngIf="data.team.opponent;then content else other_content"></span> <ng-template #content>The {{data.team.opponent}}</ng-template> <ng-template #other_content>No game today.</ng-template>
-      <br><span *ngIf="data.player.startingToday" style="background:#d35400; color:#fff; padding:3px; border-radius:2px;">Starting Pitcher for today's game. </span></p>
+      <br> Opponent: <span *ngIf="data.team.opponent;then content else other_content"></span> <ng-template #content>{{data.team.opponent}}</ng-template> <ng-template #other_content>No game today.</ng-template>
+      <br><span *ngIf="data.player.startingToday" style="background:#d35400; color:#fff; padding:3px; border-radius:2px;">Starting in today's game. </span></p>
   </md-grid-tile>
 </md-grid-list>
 <md-grid-list cols="3" rowHeight="50px">

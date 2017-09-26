@@ -38,3 +38,34 @@ my-dialog p {
 my-dialog .more-stats-btn {
   margin-bottom: 8px;
 }
+
+@media only screen and (max-width: 700px) {
+
+    my-dialog p {
+      line-height: 1.4em;
+      font-size: 8.5px;
+    }
+
+    my-dialog h1, my-dialog h2 {
+      font-size: 15px;
+    }
+
+    my-dialog h1 {
+      margin-top: 0;
+    }
+
+    .mat-dialog-container {
+      width: auto;
+      padding-top: 0;
+    }
+
+    #cdk-overlay-2 {
+      width: auto!important;
+    }
+
+    .mat-grid-tile .mat-figure { 
+      height: 65%;
+    }
+
+}
+
