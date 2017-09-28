@@ -2,7 +2,12 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const Heroku = require('heroku-client')
+
+//const heroku = new Heroku({ token: 'e15a6750-0c5c-4eab-bbb2-97676bbee80f' })
+
 const heroku = new Heroku({ token: process.env.API_TOKEN })
+
+//"Authorization": "Bearer "+process.env.API_TOKEN
 
 const api = require('./server/routes/api');
 

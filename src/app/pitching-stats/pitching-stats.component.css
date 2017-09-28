@@ -116,26 +116,37 @@ md-spinner {
 @media only screen and (max-width: 700px) {
 
     .mat-header-cell {
-        font-size: 7.5px;
+        font-size: 8px;
     }
 
     .live-case {
-      font-size: 7.5px;
+      font-size: 8px;
+      font-weight: bold;
     }
 
     .live-dot { 
-      height:3px; 
-      width:3px; 
+      height:5px; 
+      width:5px; 
     }
 
 
     .live-dot-orange {
-      height:3px; 
-      width:3px; 
+      height:5px; 
+      width:5px; 
     }
 
     .mat-header-row, .mat-row { 
         padding: 0 4px;
     }
+
+    md-table {
+      width: 900px;
+    }
+    
+    .example-container {
+      overflow-x: auto; 
+      overflow-y: auto;
+    }
+    
 
 }

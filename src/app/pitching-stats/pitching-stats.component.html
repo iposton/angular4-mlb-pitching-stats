@@ -1,6 +1,3 @@
-
-
-
 <!--The content below is only a placeholder and can be replaced.-->
 <div class="spinner-msg" *ngIf="loading">
   Retrieving pitching data...
@@ -9,18 +6,7 @@
 <md-toolbar color="primary" *ngIf="!loading">
   <span>MLB Pitching Stats</span>
   <span class="example-spacer"></span>
-  <!-- <button md-button [mdMenuTriggerFor]="appMenu">
-    <md-icon>menu</md-icon> Menu</button> -->
 </md-toolbar>
-<!--  <md-menu #appMenu="mdMenu">
-    <button md-menu-item> Settings </button>
-    <button md-menu-item> Help </button>
-  </md-menu> -->
-<!-- <md-list>
-  <md-list-item>Earned Runs Allowed: {{data.stats.EarnedRunsAllowed['#text']}}</md-list-item>
-  <md-list-item>HitsAllowed: {{data.stats.HitsAllowed['#text']}}</md-list-item>
-  <md-list-item>HomerunsAllowed: {{data.stats.HomerunsAllowed['#text']}}</md-list-item>
-</md-list> -->
 <div class="example-container mat-elevation-z8">
   <md-table #table [dataSource]="dataSource" mdSort>
     <!--- Note that these columns can be defined in any order.
@@ -28,28 +14,23 @@
     <!-- Rank Column -->
     <ng-container cdkColumnDef="id">
       <md-header-cell *cdkHeaderCellDef>
-     
-      Rank <span *ngIf="starterIdData != undefined || dailyStats != undefined" class="live-case">( </span><span class="live-case" *ngIf="dailyStats != undefined || live">live stats </span> <div class="live-dot" *ngIf="dailyStats != undefined || live" ></div>  
-
-     <span *ngIf="starterIdData != undefined" class="live-case">starting </span> <div class="live-dot-orange" *ngIf="starterIdData != undefined"></div> <span *ngIf="starterIdData != undefined || dailyStats != undefined" class="live-case">)</span>
-     
-       </md-header-cell>
-
+        Rank <span *ngIf="starterIdData != undefined || dailyStats != undefined" class="live-case">( </span><span class="live-case" *ngIf="dailyStats != undefined || live">live stats </span>
+        <div class="live-dot" *ngIf="dailyStats != undefined || live"></div>
+        <span *ngIf="starterIdData != undefined" class="live-case">starting </span>
+        <div class="live-dot-orange" *ngIf="starterIdData != undefined"></div> <span *ngIf="starterIdData != undefined || dailyStats != undefined" class="live-case">)</span>
+      </md-header-cell>
       <md-cell *cdkCellDef="let i=index; let data;">
-
-      <div fxHide [fxHide.gt-xs]="isVisibleOnDesktop()">
-        <b>{{i+1}}. </b>{{ data.player.FirstName + ' ' + data.player.LastName + ' - ' + data.team.Abbreviation}}
-        <div *ngIf="data.player.playingToday" class="live-dot"></div>&nbsp;<div *ngIf="data.player.startingToday" class="live-dot-orange"></div>
-      </div>
- 
-      <div fxHide [fxHide.xs]="isVisibleOnMobile()" style="font-size:8px;"> 
-        <b>{{i+1}}. </b>{{ data.player.LastName }}
-          <div *ngIf="data.player.playingToday" class="live-dot"></div>&nbsp;<div *ngIf="data.player.startingToday" class="live-dot-orange"></div>
-      </div>
-       
+        <div fxHide [fxHide.gt-xs]="isVisibleOnDesktop()">
+          <b>{{i+1}}. </b>{{ data.player.FirstName + ' ' + data.player.LastName + ' - ' + data.team.Abbreviation}}
+          <div *ngIf="data.player.playingToday" class="live-dot"></div>&nbsp;
+          <div *ngIf="data.player.startingToday" class="live-dot-orange"></div>
+        </div>
+        <div fxHide [fxHide.xs]="isVisibleOnMobile()">
+          <b>{{i+1}}. </b>{{ data.player.FirstName | slice:0:1 }}. {{ data.player.LastName }}
+          <div *ngIf="data.player.playingToday" class="live-dot"></div>&nbsp;
+          <div *ngIf="data.player.startingToday" class="live-dot-orange"></div>
+        </div>
       </md-cell>
-
-
     </ng-container>
     <!-- Pitches Column -->
     <ng-container cdkColumnDef="pitches">
@@ -101,6 +82,4 @@
     <md-row (click)="open($event, data)" *cdkRowDef="let data; columns: displayedColumns; let i=index;"></md-row>
   </md-table>
 </div>
-
 <!-- {{ data.player.FirstName | slice:0:1 }}  -->
-

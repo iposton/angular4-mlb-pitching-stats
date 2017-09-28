@@ -12,8 +12,6 @@ import { Location } from '@angular/common';
   styleUrls: ['./player.component.css']
 })
 
-//let playerId = '';
-
 export class PlayerComponent implements OnInit {
 
   players: Array<any>;
@@ -23,12 +21,7 @@ export class PlayerComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private infoService: InfoService, public router: Router, public location: Location) {}
 
-
-
   ngOnInit() {
-    //console.log(this.route.params['_value'].id, 'get player by id from statData');
-    // const player = route.snapshot.data;
-    // console.log(player, 'player passed in route');
     this.playerId = this.route.params['_value'].id;
     console.log(this.infoService.getSentStats(), 'getSentStats....');
     this.players = this.infoService.getSentStats();
@@ -40,15 +33,11 @@ export class PlayerComponent implements OnInit {
 
        }
     }
-
-
-
     
   }
 
   public goBack() {
     this.router.navigateByUrl('/pitching-stats');
-    //this.location.go('/pitching-stats');
   }
 
 }

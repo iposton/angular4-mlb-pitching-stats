@@ -7,12 +7,16 @@ import 'rxjs/add/operator/publishReplay';
 
 let sending;
 let sent;
+
+let headers = null;
+let options = null;
+
 let thisDate = new Date();
 let utcDate = new Date(thisDate.toUTCString());
 utcDate.setHours(utcDate.getHours() - 8);
 let myDate = new Date(utcDate);
 let dailyDate = myDate.toISOString().slice(0, 10).replace(/-/g, "");
-console.log(dailyDate, 'today date');
+//console.log(dailyDate, 'today\'s date');
 
 @Injectable()
 export class InfoService {
@@ -24,17 +28,23 @@ export class InfoService {
   daily: Observable < any > = null;
   schedule: Observable < any > = null;
 
-
-
   constructor(private http: Http) {}
 
-  getDailySchedule(token) {
+  sendHeaderOptions(h, o) {
+    console.log('got headers & options in info service...')
+    headers = h;
+    options = o;
+  }
+
+  // getUrl() {
+
+  // }
+
+  getDailySchedule() {
     //get all games for today get game ID and find a pitchers opponent
-    //if home player.team.abreviation match match schedule.homeTeam.abreviation then get awayTeam.abreviation
     if (!this.schedule) {
       console.log('getting stat data from API...');
-      let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + token) });
-      let options = new RequestOptions({ headers: headers });
+
       let url5 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/daily_game_schedule.json?fordate='+dailyDate;
       this.schedule = this.http.get(url5, options)
         .map(response => response.json())
@@ -67,11 +77,10 @@ export class InfoService {
     this.info = null;
   }
 
-  getInfo(token) {
+  getInfo() {
 
     if (!this.info) {
-      let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + token) });
-      let options = new RequestOptions({ headers: headers });
+
       let url2 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/active_players.json?position=P';
       console.log('getting player info data from API...');
       this.info = this.http.get(url2, options)
@@ -82,12 +91,11 @@ export class InfoService {
     return this.info;
   }
 
-  getStats(token) {
+  getStats() {
 
     if (!this.stats) {
       console.log('getting stat data from API...');
-      let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + token) });
-      let options = new RequestOptions({ headers: headers });
+
       let url = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/cumulative_player_stats.json?position=P&sort=STATS.Pitching-NP.D&limit=275';
       this.stats = this.http.get(url, options)
         .map(response => response.json())
@@ -95,12 +103,11 @@ export class InfoService {
     return this.stats;
   }
 
-  getGameId(token) {
+  getGameId() {
 
     if (!this.gameid) {
       console.log('getting pitch speed data from API...');
-      let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + token) });
-      let options = new RequestOptions({ headers: headers });
+
       let url3 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/full_game_schedule.json?date=from-8-days-ago-to-2-days-ago';
       this.gameid = this.http.get(url3, options)
         .map(response => response.json())
@@ -108,20 +115,14 @@ export class InfoService {
     return this.gameid;
   }
 
-  getDaily(token) {
+  getDaily() {
 
     if (!this.daily) {
-      //console.log(dailyDate, 'daily date..');
-      let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + token) });
-      let options = new RequestOptions({ headers: headers });
       let url4 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/daily_player_stats.json?fordate='+dailyDate+'&position=P';
       console.log('getting daily stats for pitchers from API...');
       this.daily = this.http.get(url4, options)
         .map(response => response.json())
-
     }
     return this.daily;
   }
-
-
 }

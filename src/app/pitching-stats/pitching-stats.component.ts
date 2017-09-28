@@ -17,6 +17,9 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/publishReplay';
 import 'rxjs/add/observable/forkJoin';
 
+let headers = null;
+let options = null;
+
 export interface Data {}
 
 @Component({
@@ -57,7 +60,7 @@ export class PitchingStatsComponent implements OnInit {
   dataSource: MyDataSource;
 
   pitcherspeed: { pitcher: string, pitchspeedStart: string, lastName: string };
-  //@ViewChild(MdPaginator) paginator: MdPaginator;
+  
   @ViewChild(MdSort) sort: MdSort;
 
   constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http) {this.players = this.infoService.getSentStats();}
@@ -67,9 +70,13 @@ export class PitchingStatsComponent implements OnInit {
     this.infoService
       .getEnv().subscribe(res => {
         this.defineToken = res._body;
+        headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + this.defineToken) });
+        options = new RequestOptions({ headers: headers });
+        this.infoService
+          .sendHeaderOptions(headers, options);
         //this.loadData(this.defineToken);
 
-        // let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + this.defineToken) });
+        //// let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + this.defineToken) });
         // let options = new RequestOptions({ headers: headers });
 
         //THESE FUNCTIONS WORK TOGETHER TO MAKE MULTIPLE API CALLS AND PUSH IT ALL TO FIREBASE
@@ -128,81 +135,70 @@ export class PitchingStatsComponent implements OnInit {
         //     });
         //          this.loadData(this.defineToken);
         //   });
-          this.infoService
-      .getDailySchedule(this.defineToken).subscribe(res => {
-        let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + this.defineToken) });
-        let options = new RequestOptions({ headers: headers });
-        console.log(res, "schedule...");
-        this.dailySchedule = res['dailygameschedule'].gameentry;
 
-        Observable.forkJoin(
-            res['dailygameschedule'].gameentry.map(
-              g =>
-              this.http.get('https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/game_startinglineup.json?gameid=' + g.id + '&position=P', options)
-              .map(response => response.json())
+      this.infoService
+        .getDailySchedule().subscribe(res => {
+         
+          console.log(res, "schedule...");
+          this.dailySchedule = res['dailygameschedule'].gameentry;
+
+          Observable.forkJoin(
+              res['dailygameschedule'].gameentry.map(
+                g =>
+                this.http.get('https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/game_startinglineup.json?gameid=' + g.id + '&position=P', options)
+                .map(response => response.json())
+              )
             )
-          )
-          .subscribe(res => {
-            console.log(res, 'making several calls by GAME ID for starting lineups...');
+            .subscribe(res => {
+              console.log(res, 'making several calls by GAME ID for starting lineups...');
 
-            let i;
-            let i2;
-            let res2;
-            res.forEach((item, index) => {
-              i = index;
-              //console.log(res[i]['gamestartinglineup'].teamLineup, 'got starting lineups data!');
-              res2 = res[i]['gamestartinglineup'].teamLineup
-              res2.forEach((item, index) => {
-                i2 = index;
-                if (res2[i2].expected === null) {
-                  console.log(res2[i2], 'starter is NULL in here. ERROR.');
-                } else {
-                  //console.log(res2[i2].expected.starter[0].player.ID, 'got player ID!');
-                  this.starterIdData.push(res2[i2].expected.starter[0].player.ID);
-                  //console.log(this.starterIdData, 'this array has ALL the IDs of todays starters');
-                }
+              let i;
+              let i2;
+              let res2;
+              res.forEach((item, index) => {
+                i = index;
+                //console.log(res[i]['gamestartinglineup'].teamLineup, 'got starting lineups data!');
+                res2 = res[i]['gamestartinglineup'].teamLineup
+                res2.forEach((item, index) => {
+                  i2 = index;
+                  if (res2[i2].expected === null) {
+                    console.log(res2[i2], 'starter is NULL in here. ERROR.');
+                  } else {
+                    //console.log(res2[i2].expected.starter[0].player.ID, 'got player ID!');
+                    this.starterIdData.push(res2[i2].expected.starter[0].player.ID);
+                    //console.log(this.starterIdData, 'this array has ALL the IDs of todays starters');
+                  }
 
-
+                });
               });
+
             });
-
-          });
-          this.loadData(this.defineToken);
-      })
+            this.loadData();
+        })
 
 
       })
-
-
 
     this.firebaseService
       .getFastballData()
       .subscribe(x => {
-        console.log(x, 'got response from fb....');
-        //this.loadData(this.defineToken);
+        console.log(x, 'got response from firebase...');
+        //this.loadData();
         this.fastballData = x;
       });
-
-
-
-
-
-
   }
 
-  loadData(token) {
-
-   
+  loadData() {
 
     this.infoService
-      .getDaily(token).subscribe(res => {
+      .getDaily().subscribe(res => {
         console.log(res, "Daily stats...");
         this.dailyStats = res['dailyplayerstats'].playerstatsentry;
       })
 
     
     this.infoService
-      .getInfo(token).subscribe(res => {
+      .getInfo().subscribe(res => {
         console.log(res, 'got player info res from cache I think!');
         this.playerInfo = res['activeplayers'].playerentry;
       });
@@ -210,7 +206,7 @@ export class PitchingStatsComponent implements OnInit {
     //THESE FUNCTIONS GET PLAYER INFO AND CREATE CUSTOM PLAYER VALUES BARROWED FROM SEPARATE API CALL
 
     this.infoService
-      .getStats(token).subscribe(res => {
+      .getStats().subscribe(res => {
         console.log(res, 'got res!');
 
         this.myData = res['cumulativeplayerstats'].playerstatsentry;
@@ -347,20 +343,22 @@ export class PitchingStatsComponent implements OnInit {
 
 
   }
-  
-  
 
   ngOnInit() {
+    // IF ALL THE PITCHING DATA IS DEFINED DON'T RUN LOADENV()
+    // WHICH CALLS THE API FOR DATA
+    // ELSE GET THE DATA SAVED IN THE INFO SERVICE 
+    // AVOID LONG RELOADING TIME
     if (this.players === undefined) {
       this.loadEnv();
     } else {
-      //this.loading = false;
+
       //This fills the table with data
       this.dataSource = new MyDataSource(this.players, this.sort);
 
       setInterval (() => {
         this.loading = false;
-      }, 300)
+      }, 0)
 
       for (let p of this.players) { 
         if (p.player.playingToday) {
@@ -382,11 +380,11 @@ export class PitchingStatsComponent implements OnInit {
   }
 
   public isVisibleOnMobile() {
-    console.log('width under 600px');
+    // console.log('width under 600px');
   }
 
   public isVisibleOnDesktop() {
-    console.log('width over 600px');
+    // console.log('width over 600px');
   }
 
 }
@@ -456,13 +454,9 @@ export class MyDialog {
 }
 
 export class MyDataSource extends DataSource < Data > {
-   
 
-  //console.log(Data[], 'data[]');
   constructor(private datas: Data[], private sort: MdSort) {
-
     super();
-
   }
 
 
@@ -494,8 +488,7 @@ export class MyDataSource extends DataSource < Data > {
       let propertyB: number | string = '';
 
       switch (this.sort.active) {
-        // ['id', 'pitches', 'strikeouts', 'inningsPitched', 'battersHit', 'pitcherWildPitches', 'pitcherWalks', 'pitchesPerInning', 'pickoffAttempts'];
-        //case 'id': [propertyA, propertyB] = [a.index, b.index]; break;
+
         case 'pitches':
           [propertyA, propertyB] = [a['stats'].PitchesThrown['#text'], b['stats'].PitchesThrown['#text']];
           break;
@@ -525,7 +518,6 @@ export class MyDataSource extends DataSource < Data > {
 
       return (valueA < valueB ? -1 : 1) * (this.sort.direction == 'asc' ? 1 : -1);
     });
-
     
   }
 
