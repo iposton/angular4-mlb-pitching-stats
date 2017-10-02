@@ -113,7 +113,7 @@ md-spinner {
   margin: 0 auto;
 }
 
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 900px) {
 
     .mat-header-cell {
         font-size: 8px;
@@ -146,6 +146,7 @@ md-spinner {
     .example-container {
       overflow-x: auto; 
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     
 
