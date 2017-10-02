@@ -30,7 +30,7 @@ export interface Data {}
 export class PitchingStatsComponent implements OnInit {
 
   title = 'app';
-  players: Array<any> ;
+  players: Array < any > ;
   myData: Array < any > ;
   playerInfo: Array < any > ;
   statData: Array < any > ;
@@ -44,6 +44,8 @@ export class PitchingStatsComponent implements OnInit {
   speedResults: Array < any > = [];
   loading: boolean = true;
   live: boolean = false;
+  gamesToday: boolean = false;
+  noGamesToday: boolean = false;
 
   stat: string = '';
   defineToken: string = '';
@@ -60,13 +62,13 @@ export class PitchingStatsComponent implements OnInit {
   dataSource: MyDataSource;
 
   pitcherspeed: { pitcher: string, pitchspeedStart: string, lastName: string };
-  
+
   @ViewChild(MdSort) sort: MdSort;
 
-  constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http) {this.players = this.infoService.getSentStats();}
+  constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http) { this.players = this.infoService.getSentStats(); }
 
   loadEnv() {
-    
+
     this.infoService
       .getEnv().subscribe(res => {
         this.defineToken = res._body;
@@ -136,46 +138,54 @@ export class PitchingStatsComponent implements OnInit {
         //          this.loadData(this.defineToken);
         //   });
 
-      this.infoService
-        .getDailySchedule().subscribe(res => {
-         
-          console.log(res, "schedule...");
-          this.dailySchedule = res['dailygameschedule'].gameentry;
+        this.infoService
+          .getDailySchedule().subscribe(res => {
 
-          Observable.forkJoin(
-              res['dailygameschedule'].gameentry.map(
-                g =>
-                this.http.get('https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/game_startinglineup.json?gameid=' + g.id + '&position=P', options)
-                .map(response => response.json())
-              )
-            )
-            .subscribe(res => {
-              console.log(res, 'making several calls by GAME ID for starting lineups...');
+            console.log(res['dailygameschedule'], "schedule...");
+            //this.dailySchedule = res['dailygameschedule'].gameentry;
+            if (res['dailygameschedule'].gameentry == null) {
+              this.noGamesToday = true;
+              console.log('There are no games being played today.');
+            } else {
+              this.gamesToday = true;
 
-              let i;
-              let i2;
-              let res2;
-              res.forEach((item, index) => {
-                i = index;
-                //console.log(res[i]['gamestartinglineup'].teamLineup, 'got starting lineups data!');
-                res2 = res[i]['gamestartinglineup'].teamLineup
-                res2.forEach((item, index) => {
-                  i2 = index;
-                  if (res2[i2].expected === null) {
-                    console.log(res2[i2], 'starter is NULL in here. ERROR.');
-                  } else {
-                    //console.log(res2[i2].expected.starter[0].player.ID, 'got player ID!');
-                    this.starterIdData.push(res2[i2].expected.starter[0].player.ID);
-                    //console.log(this.starterIdData, 'this array has ALL the IDs of todays starters');
-                  }
+              Observable.forkJoin(
+                  res['dailygameschedule'].gameentry.map(
+                    g =>
+                    this.http.get('https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/game_startinglineup.json?gameid=' + g.id + '&position=P', options)
+                    .map(response => response.json())
+                  )
+                )
+                .subscribe(res => {
+                  console.log(res, 'making several calls by GAME ID for starting lineups...');
+
+                  let i;
+                  let i2;
+                  let res2;
+                  res.forEach((item, index) => {
+                    i = index;
+                    //console.log(res[i]['gamestartinglineup'].teamLineup, 'got starting lineups data!');
+                    res2 = res[i]['gamestartinglineup'].teamLineup
+                    res2.forEach((item, index) => {
+                      i2 = index;
+                      if (res2[i2].expected === null) {
+                        console.log(res2[i2], 'starter is NULL in here. ERROR.');
+                      } else {
+                        //console.log(res2[i2].expected.starter[0].player.ID, 'got player ID!');
+                        this.starterIdData.push(res2[i2].expected.starter[0].player.ID);
+                        //console.log(this.starterIdData, 'this array has ALL the IDs of todays starters');
+                      }
+
+                    });
+                  });
 
                 });
-              });
+            }
 
-            });
             this.loadData();
-        })
 
+
+          })
 
       })
 
@@ -190,13 +200,18 @@ export class PitchingStatsComponent implements OnInit {
 
   loadData() {
 
-    this.infoService
-      .getDaily().subscribe(res => {
-        console.log(res, "Daily stats...");
-        this.dailyStats = res['dailyplayerstats'].playerstatsentry;
-      })
+    if (this.gamesToday === true) {
+      this.infoService
+        .getDaily().subscribe(res => {
+          console.log(res, "Daily stats...");
+          this.dailyStats = res['dailyplayerstats'].playerstatsentry;
+        })
+    } else {
+      console.log('No games then no daily stats either. :(');
+    }
 
-    
+
+
     this.infoService
       .getInfo().subscribe(res => {
         console.log(res, 'got player info res from cache I think!');
@@ -211,9 +226,9 @@ export class PitchingStatsComponent implements OnInit {
 
         this.myData = res['cumulativeplayerstats'].playerstatsentry;
 
-        if (this.starterIdData.length > 0) {
+        if (this.starterIdData.length > 0 || this.noGamesToday === true) {
 
-          if (this.myData && this.starterIdData) {
+          if (this.myData && this.starterIdData && this.gamesToday === true) {
             console.log('start sorting data for starters...');
             for (let startid of this.starterIdData) {
 
@@ -356,17 +371,17 @@ export class PitchingStatsComponent implements OnInit {
       //This fills the table with data
       this.dataSource = new MyDataSource(this.players, this.sort);
 
-      setInterval (() => {
+      setInterval(() => {
         this.loading = false;
       }, 0)
 
-      for (let p of this.players) { 
+      for (let p of this.players) {
         if (p.player.playingToday) {
           this.live = true;
         }
       }
-      
-    }  
+
+    }
   }
 
   public open(event, data) {
@@ -518,7 +533,7 @@ export class MyDataSource extends DataSource < Data > {
 
       return (valueA < valueB ? -1 : 1) * (this.sort.direction == 'asc' ? 1 : -1);
     });
-    
+
   }
 
 }
