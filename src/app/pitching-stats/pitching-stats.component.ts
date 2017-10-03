@@ -46,6 +46,7 @@ export class PitchingStatsComponent implements OnInit {
   live: boolean = false;
   gamesToday: boolean = false;
   noGamesToday: boolean = false;
+  selected: any;
 
   stat: string = '';
   defineToken: string = '';
@@ -142,7 +143,7 @@ export class PitchingStatsComponent implements OnInit {
           .getDailySchedule().subscribe(res => {
 
             console.log(res['dailygameschedule'], "schedule...");
-            //this.dailySchedule = res['dailygameschedule'].gameentry;
+            this.dailySchedule = res['dailygameschedule'].gameentry;
             if (res['dailygameschedule'].gameentry == null) {
               this.noGamesToday = true;
               console.log('There are no games being played today.');
@@ -152,7 +153,7 @@ export class PitchingStatsComponent implements OnInit {
               Observable.forkJoin(
                   res['dailygameschedule'].gameentry.map(
                     g =>
-                    this.http.get('https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/game_startinglineup.json?gameid=' + g.id + '&position=P', options)
+                    this.http.get('https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/game_startinglineup.json?gameid=' + g.id + '&position=P', options)
                     .map(response => response.json())
                   )
                 )
@@ -301,6 +302,14 @@ export class PitchingStatsComponent implements OnInit {
             for (let info of this.playerInfo) {
               for (let data of this.myData) {
 
+                if (data.team.Abbreviation === 'HOU' || data.team.Abbreviation === 'CLE' || data.team.Abbreviation === 'NYY' || data.team.Abbreviation === 'MIN' || data.team.Abbreviation === 'BOS' ) {
+                    data.player.americanLeaguePlayoff = true;
+                }
+
+                if (data.team.Abbreviation === 'LA' || data.team.Abbreviation === 'WAS' || data.team.Abbreviation === 'CHC' || data.team.Abbreviation === 'ARI' || data.team.Abbreviation === 'COL' ) {
+                    data.player.nationalLeaguePlayoff = true;
+                }
+
                 if (info.player.ID === data.player.ID) {
                   if (data.stats.Pitcher2SeamFastballs && data.stats.Pitcher4SeamFastballs && data.stats.PitcherChangeups && data.stats.PitcherCurveballs && data.stats.PitcherCutters && data.stats.PitcherSliders && data.stats.PitcherSinkers && data.stats.PitcherSplitters) {
                     data.player.favPitch = Math.max(parseInt(data.stats.Pitcher2SeamFastballs['#text'], 10), parseInt(data.stats.Pitcher4SeamFastballs['#text'], 10), parseInt(data.stats.PitcherChangeups['#text'], 10), parseInt(data.stats.PitcherCurveballs['#text'], 10), parseInt(data.stats.PitcherCutters['#text'], 10), parseInt(data.stats.PitcherSliders['#text'], 10), parseInt(data.stats.PitcherSinkers['#text'], 10), parseInt(data.stats.PitcherSplitters['#text'], 10));
@@ -385,14 +394,17 @@ export class PitchingStatsComponent implements OnInit {
   }
 
   public open(event, data) {
+    this.selected = data;
     console.log(data, 'ok you clicked on a table row....');
     this.dialog.open(MyDialog, {
       data: data,
       width: '600px',
     });
-
-
   }
+
+  public isActive(data) {
+      return this.selected === data;
+  };
 
   public isVisibleOnMobile() {
     // console.log('width under 600px');
@@ -409,17 +421,18 @@ export class PitchingStatsComponent implements OnInit {
   template: `<md-dialog-content>
   <md-icon (click)="dialogRef.close()" style="float:right; cursor:pointer;">close</md-icon>
 </md-dialog-content>
-<md-grid-list cols="3" rowHeight="200px">
+<md-grid-list cols="3" rowHeight="200px" class="dialog-head">
   <md-grid-tile [colspan]="1">
     <img src="{{ data.player.image }}">
   </md-grid-tile>
   <md-grid-tile [colspan]="2">
-    <p>{{ data.player.FirstName + ' ' + data.player.LastName + ' (' + data.team.Name + ' - ' + data.player.Position + ')'}} <span *ngIf="data.player.IsRookie == 'true'" style="background:#2ecc71; color:#fff; padding:3px; border-radius:2px;">Rookie</span>
+    <p>{{ data.player.FirstName + ' ' + data.player.LastName + ' (' + data.team.Name + ' - ' + data.player.Position + ')'}} <span *ngIf="data.player.IsRookie == 'true'" style="background:#2ecc71; color:#fff; padding:1px; border-radius:2px;">Rookie</span>
       <br> Age: {{data.player.age}} Height: {{data.player.Height}} Weight: {{data.player.Weight}}
       <br> Birth City: {{data.player.city +', '+ data.player.country}}
       <br> Number: {{data.player.JerseyNumber}}
       <br> Opponent: <span *ngIf="data.team.opponent;then content else other_content"></span> <ng-template #content>{{data.team.opponent}}</ng-template> <ng-template #other_content>No game today.</ng-template>
-      <br><span *ngIf="data.player.startingToday" style="background:#d35400; color:#fff; padding:3px; border-radius:2px;">Starting in today's game. </span></p>
+      <br><span *ngIf="data.player.americanLeaguePlayoff || data.player.nationalLeaguePlayoff" style="background:#2ecc71; color:#fff; padding:1px; border-radius:2px;">{{data.team.City}} made the playoffs. </span>
+      <br><span *ngIf="data.player.startingToday" style="background:#d35400; color:#fff; padding:1px; border-radius:2px;">Starting in today's game. </span></p>
   </md-grid-tile>
 </md-grid-list>
 <md-grid-list cols="3" rowHeight="50px">

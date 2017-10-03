@@ -31,6 +31,17 @@ md-card {
   flex-direction: column;
   height: 90vh;
   min-width: 300px;
+  overflow: hidden; 
+  position: relative;
+}
+
+.mat-header-row { 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  width: 97%; 
+  background: #fff; 
+  z-index: 5
 }
 
 .example-header {
@@ -59,7 +70,8 @@ md-row {
   cursor: pointer;
 }
 
-md-row:hover {
+md-row:hover,
+md-row.active {
   background: #ccc;
 }
 
@@ -113,6 +125,8 @@ md-spinner {
   margin: 0 auto;
 }
 
+
+
 @media only screen and (max-width: 900px) {
 
     .mat-header-cell {
@@ -142,12 +156,17 @@ md-spinner {
     md-table {
       width: 900px;
     }
+
+    .mat-header-row {
+      width: 885px;
+    }
     
     .example-container {
       overflow-x: auto; 
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
+
     
 
 }

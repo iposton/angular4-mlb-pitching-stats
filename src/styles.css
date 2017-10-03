@@ -57,6 +57,11 @@ my-dialog .more-stats-btn {
     .mat-dialog-container {
       width: auto;
       padding-top: 0;
+      margin: 0 auto;
+    }
+
+    md-dialog-container {
+      padding-top: 4px;
     }
 
     #cdk-overlay-2 {
@@ -67,7 +72,8 @@ my-dialog .more-stats-btn {
       height: 65%;
     }
 
-    
-
+   .dialog-head {
+      height: 175px!important;
+    }
 }
 
