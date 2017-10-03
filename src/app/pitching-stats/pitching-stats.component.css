@@ -50,12 +50,15 @@ md-card {
 }
 
 .mat-header-row { 
+  display: block;
   position: absolute; 
   top: 0; 
   left: 0; 
   width: 97%; 
   background: #fff; 
   z-index: 9999;
+  box-sizing: border-box;
+  -webkit-backface-visibility: hidden;
 }
 
 .mat-header-cell .mat-sort-header-sorted {
