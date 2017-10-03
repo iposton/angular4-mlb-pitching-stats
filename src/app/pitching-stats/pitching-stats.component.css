@@ -26,24 +26,6 @@ md-card {
 
 /* Structure */
 
-.example-container {
-  display: flex;
-  flex-direction: column;
-  height: 90vh;
-  min-width: 300px;
-  overflow: hidden; 
-  position: relative;
-}
-
-.mat-header-row { 
-  position: absolute; 
-  top: 0; 
-  left: 0; 
-  width: 97%; 
-  background: #fff; 
-  z-index: 5
-}
-
 .example-header {
   min-height: 64px;
   display: flex;
@@ -54,8 +36,34 @@ md-card {
 
 /* TABLE */
 
+.example-container {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  min-width: 300px;
+  overflow: hidden; 
+  position: relative;
+}
+
 .mat-table {
-  overflow: auto;
+  overflow: auto; 
+  margin-top: 48px;
+}
+
+.mat-header-row { 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  width: 97%; 
+  background: #fff; 
+  z-index: 5;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -moz-transform: translatez(0);
+  -ms-transform: translatez(0);
+  -o-transform: translatez(0);
+  -webkit-transform: translateZ(0);
+  -webkit-font-smoothing: antialiased; /* seems to do the same in Safari */
 }
 
 .mat-header-cell .mat-sort-header-sorted {
@@ -158,7 +166,7 @@ md-spinner {
     }
 
     .mat-header-row {
-      width: 885px;
+      width: 892px;
     }
     
     .example-container {
@@ -166,7 +174,5 @@ md-spinner {
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
-
-    
 
 }
