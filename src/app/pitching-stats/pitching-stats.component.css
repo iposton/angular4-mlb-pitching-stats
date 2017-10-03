@@ -162,7 +162,6 @@ md-spinner {
     
     .example-container {
       overflow-x: auto; 
-      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
 
