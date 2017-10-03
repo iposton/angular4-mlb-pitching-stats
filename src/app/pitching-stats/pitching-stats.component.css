@@ -41,23 +41,19 @@ md-card {
   flex-direction: column;
   height: 90vh;
   min-width: 300px; 
-  position: relative;
 }
 
 .mat-table {
   overflow: scroll; 
-  margin-top: 48px;
 }
 
 .mat-header-row { 
-  display: block;
-  position: absolute; 
+  position: sticky; 
   top: 0; 
   left: 0; 
   width: 97%; 
   background: #fff; 
-  z-index: 9999;
-  box-sizing: border-box;
+  z-index: 5;
   -webkit-backface-visibility: hidden;
 }
 
