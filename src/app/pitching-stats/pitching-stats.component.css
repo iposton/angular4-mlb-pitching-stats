@@ -57,12 +57,6 @@ md-card {
   width: 97%; 
   background: #fff; 
   z-index: 5;
-  transform: translateZ(0);
-  -moz-transform: translatez(0);
-  -ms-transform: translatez(0);
-  -o-transform: translatez(0);
-  -webkit-transform: translateZ(0);
-  -webkit-font-smoothing: antialiased; /* seems to do the same in Safari */
 }
 
 .mat-header-cell .mat-sort-header-sorted {
