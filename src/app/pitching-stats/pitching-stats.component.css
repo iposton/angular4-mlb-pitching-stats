@@ -43,7 +43,7 @@ md-card {
 }
 
 .mat-table {
-  
+  overflow: scroll; 
 }
 
 .mat-header-row { 
@@ -53,6 +53,7 @@ md-card {
   width: 97%; 
   background: #fff; 
   z-index: 5;
+  -webkit-backface-visibility: hidden;
 }
 
 .mat-header-cell .mat-sort-header-sorted {
