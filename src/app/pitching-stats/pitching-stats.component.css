@@ -39,8 +39,7 @@ md-card {
 .example-container {
   display: flex;
   flex-direction: column;
-  height: 90vh;
-  min-width: 300px; 
+  height: 100%; 
 }
 
 .mat-table {
@@ -50,12 +49,10 @@ md-card {
 .mat-header-row {
   position: -webkit-sticky; 
   position: sticky; 
-  top: 0; 
-  left: 0; 
+  top: 0;  
   width: 97%; 
   background: #fff; 
   z-index: 5;
-  -webkit-backface-visibility: hidden;
 }
 
 .mat-header-cell .mat-sort-header-sorted {
