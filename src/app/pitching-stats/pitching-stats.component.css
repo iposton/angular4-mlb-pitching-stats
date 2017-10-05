@@ -37,11 +37,12 @@ md-card {
 #exampleContainer {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 90vh;
   position: relative;
 }
 
 .mat-table {
+  margin-top: 46px;
   overflow: scroll; 
 }
 
@@ -50,16 +51,18 @@ md-card {
 }
 
 .mat-header-row {
+  transform: translate3d(0,0,0);
   position: absolute; 
   top: 0; 
   left: 0; 
   background: #fff; 
   z-index: 5;
-  width: 97%;
+  width: 96.2%;
 }
 
 .mat-header-cell .mat-sort-header-sorted {
   color: black;
+  transform: translate3d(0,0,0);
 }
 
 .mat-cell {
