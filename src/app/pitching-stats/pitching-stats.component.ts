@@ -79,7 +79,7 @@ export class PitchingStatsComponent implements OnInit {
     
 
     if (window.innerWidth < 900) {
-      this.scrollHeight = 10000+'px';
+      this.scrollHeight = 5000+'px';
     } else {
       console.log(window.innerWidth, 'screen width');
       this.scrollHeight = 100+'vh';
