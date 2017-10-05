@@ -1,4 +1,4 @@
-import { Component, ViewChild, Inject, OnInit } from '@angular/core';
+import { Component, ViewChild, Inject, OnInit, Renderer2 } from '@angular/core';
 import { MdDialog } from '@angular/material';
 import { MdDialogRef } from "@angular/material";
 import { MD_DIALOG_DATA } from '@angular/material';
@@ -47,8 +47,8 @@ export class PitchingStatsComponent implements OnInit {
   gamesToday: boolean = false;
   noGamesToday: boolean = false;
   selected: any;
-  innerHeight: any;
-
+  scrollHeight: any;
+  scrollTop: any;
   stat: string = '';
   defineToken: string = '';
   displayedColumns = [
@@ -68,10 +68,25 @@ export class PitchingStatsComponent implements OnInit {
 
   @ViewChild(MdSort) sort: MdSort;
 
-  constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http) { 
+  constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http, private renderer: Renderer2) { 
     this.players = this.infoService.getSentStats(); 
-    this.innerHeight = (window.screen.height);
+    this.scrollHeight = (window.screen.width);
+    this.renderer.listen('window', 'scroll', (evt) => { 
+      console.log('scroll'); 
+      this.scrollTop = document.getElementById('exampleContainer').offsetHeight;
+       console.log(document.getElementById('exampleContainer').offsetHeight, 'height');
+    });
+    
+
+    if (window.innerWidth < 900) {
+      this.scrollHeight = 2000+'px';
+    } else {
+      console.log(window.innerWidth, 'screen width');
+      this.scrollHeight = 100+'vh';
+    }
   }
+
+
 
   loadEnv() {
 
@@ -334,6 +349,7 @@ export class PitchingStatsComponent implements OnInit {
                   //This fills the table with data
                   this.dataSource = new MyDataSource(this.statData, this.sort);
 
+
                 }
 
               }
@@ -418,6 +434,11 @@ export class PitchingStatsComponent implements OnInit {
   public isVisibleOnDesktop() {
     // console.log('width over 600px');
   }
+
+  public onScroll () {
+      this.scrollTop = window.document.getElementById('exampleContainer').scrollTop;
+       console.log(this.scrollTop, 'scrolltop');
+    }
 
 }
 

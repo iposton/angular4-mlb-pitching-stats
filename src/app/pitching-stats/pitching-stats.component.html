@@ -7,7 +7,7 @@
   <span>MLB Pitching Stats</span>
   <span class="example-spacer"></span>
 </md-toolbar>
-<div class="example-container mat-elevation-z8" [style.height.px]="innerHeight">
+<div onscroll="onScroll" id="exampleContainer" class="example-container mat-elevation-z8" [style.height]="scrollHeight">
   <md-table #table [dataSource]="dataSource" mdSort>
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->

@@ -34,7 +34,7 @@ md-card {
 
 /* TABLE */
 
-.example-container {
+#exampleContainer {
   display: flex;
   flex-direction: column;
 }

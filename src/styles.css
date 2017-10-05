@@ -4,7 +4,6 @@ body {
     padding: 1em 0em;
     background:lightgray;
     font-family: Roboto, Arial, sans-serif;
-    min-height: 100%;
 }
 
 my-dialog img {
