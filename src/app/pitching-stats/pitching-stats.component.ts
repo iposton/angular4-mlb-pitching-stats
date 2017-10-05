@@ -47,6 +47,7 @@ export class PitchingStatsComponent implements OnInit {
   gamesToday: boolean = false;
   noGamesToday: boolean = false;
   selected: any;
+  innerHeight: any;
 
   stat: string = '';
   defineToken: string = '';
@@ -61,12 +62,16 @@ export class PitchingStatsComponent implements OnInit {
     'pickoffAttempts'
   ];
   dataSource: MyDataSource;
-
+ 
+  
   pitcherspeed: { pitcher: string, pitchspeedStart: string, lastName: string };
 
   @ViewChild(MdSort) sort: MdSort;
 
-  constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http) { this.players = this.infoService.getSentStats(); }
+  constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http) { 
+    this.players = this.infoService.getSentStats(); 
+    this.innerHeight = (window.screen.height);
+  }
 
   loadEnv() {
 
@@ -385,7 +390,7 @@ export class PitchingStatsComponent implements OnInit {
       }, 0)
 
       for (let p of this.players) {
-        if (p.player.playingToday) {
+        if (p.player.playingToday || p.player.startingToday) {
           this.live = true;
         }
       }

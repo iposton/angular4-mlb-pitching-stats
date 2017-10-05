@@ -7,17 +7,17 @@
   <span>MLB Pitching Stats</span>
   <span class="example-spacer"></span>
 </md-toolbar>
-<div class="example-container mat-elevation-z8">
+<div class="example-container mat-elevation-z8" [style.height.px]="innerHeight">
   <md-table #table [dataSource]="dataSource" mdSort>
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
     <!-- Rank Column -->
     <ng-container cdkColumnDef="id">
       <md-header-cell *cdkHeaderCellDef>
-        Rank <span *ngIf="gamesToday" class="live-case">( </span><span class="live-case" *ngIf="dailyStats != undefined || live">live stats </span>
+        Rank <span *ngIf="gamesToday || live" class="live-case">( </span><span class="live-case" *ngIf="dailyStats != undefined || live">live stats </span>
         <div class="live-dot" *ngIf="dailyStats != undefined || live"></div>
-        <span *ngIf="gamesToday" class="live-case">starting </span>
-        <div class="live-dot-orange" *ngIf="gamesToday"></div> <span *ngIf="gamesToday" class="live-case">)</span>
+        <span *ngIf="gamesToday || live" class="live-case">starting </span>
+        <div class="live-dot-orange" *ngIf="gamesToday || live"></div> <span *ngIf="gamesToday || live" class="live-case">)</span>
       </md-header-cell>
       <md-cell *cdkCellDef="let i=index; let data;">
         <div fxHide [fxHide.gt-xs]="isVisibleOnDesktop()">
