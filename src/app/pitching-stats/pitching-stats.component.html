@@ -79,6 +79,7 @@
       </md-cell>
     </ng-container>
     <md-header-row *cdkHeaderRowDef="displayedColumns" [ngClass]="loading ? 'loading' : 'notLoading'" class="mat-header-row-res"></md-header-row>
+    <md-row></md-row>
     <md-row [ngClass]="{'active': isActive(data)}" (click)="open($event, data)" *cdkRowDef="let data; columns: displayedColumns; let i=index;"></md-row>
   </md-table>
 </div>
