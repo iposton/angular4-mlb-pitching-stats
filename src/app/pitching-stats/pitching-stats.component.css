@@ -49,9 +49,9 @@ md-card {
 .mat-header-row-res {
   -webkit-transform: translate3d(0,0,0);
   transform: translate3d(0,0,0);
-  /*transform-style: preserve-3d;
+  transform-style: preserve-3d;
   transform: translateZ(0);
-  -webkit-transform: translateZ(0);*/
+  -webkit-transform: translateZ(0);
   clip: rect(auto, auto, auto, auto);
   clip-path: inset(0 0 0 0);
   -webkit-backface-visibility: hidden;
