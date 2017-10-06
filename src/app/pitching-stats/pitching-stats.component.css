@@ -43,16 +43,13 @@ md-card {
 }
 
 .mat-table {
-  margin-top: 48px;
   overflow: scroll; 
 }
 
 .mat-header-row-res {
-  /*-webkit-transform: translate3d(0,0,0);
+  -webkit-transform: translate3d(0,0,0);
   transform: translate3d(0,0,0);
-  transform-style: preserve-3d;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+  /*transform-style: preserve-3d;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);*/
   clip: rect(auto, auto, auto, auto);

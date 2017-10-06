@@ -7,7 +7,7 @@
   <span>MLB Pitching Stats</span>
   <span class="example-spacer"></span>
 </md-toolbar>
-<div onscroll="onScroll" id="exampleContainer" class="example-container example-container-fixed mat-elevation-z8">
+<div id="exampleContainer" class="example-container example-container-fixed mat-elevation-z8">
   <md-table #table [dataSource]="dataSource" mdSort>
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
@@ -79,7 +79,7 @@
       </md-cell>
     </ng-container>
     <md-header-row *cdkHeaderRowDef="displayedColumns" [ngClass]="loading ? 'loading' : 'notLoading'" class="mat-header-row-res"></md-header-row>
-    <md-row></md-row>
+    <span style="margin-top:48px;"></span>
     <md-row [ngClass]="{'active': isActive(data)}" (click)="open($event, data)" *cdkRowDef="let data; columns: displayedColumns; let i=index;"></md-row>
   </md-table>
 </div>
