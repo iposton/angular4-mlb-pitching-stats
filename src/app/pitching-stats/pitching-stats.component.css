@@ -78,6 +78,10 @@ md-row {
   cursor: pointer;
 }
 
+md-row.margin{
+  margin-top: 48px;
+}
+
 md-row:hover,
 md-row.active {
   background: #ccc;

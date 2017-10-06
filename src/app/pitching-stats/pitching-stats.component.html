@@ -79,8 +79,7 @@
       </md-cell>
     </ng-container>
     <md-header-row *cdkHeaderRowDef="displayedColumns" [ngClass]="loading ? 'loading' : 'notLoading'" class="mat-header-row-res"></md-header-row>
-    <span style="height:48px; width: auto"></span>
-    <md-row [ngClass]="{'active': isActive(data)}" (click)="open($event, data)" *cdkRowDef="let data; columns: displayedColumns; let i=index;"></md-row>
+    <md-row [ngClass]="{'active': isActive(data), 'margin': i === 0}" (click)="open($event, data)" *cdkRowDef="let data; columns: displayedColumns; let i=index;"></md-row>
   </md-table>
 </div>
 <!-- {{ data.player.FirstName | slice:0:1 }}  -->
