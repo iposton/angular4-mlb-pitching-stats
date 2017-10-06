@@ -22,9 +22,6 @@ md-card {
   display: inline-block;
 }
 
-.mat-toolbar {
-  margin-bottom: 48px;
-}
 
 /* Structure */
 
@@ -46,6 +43,7 @@ md-card {
 }
 
 .mat-table {
+  margin-top: 48px;
   overflow: scroll; 
 }
 
@@ -56,7 +54,7 @@ md-card {
 
 .mat-header-row {
   position: absolute; 
-  top: -48px; 
+  top: 0; 
   left: 0; 
   background: #fff; 
   z-index: 5;
