@@ -50,7 +50,8 @@ md-card {
 }
 
 .mat-header-row-res {
-  transform: translate3d(0,0,0);
+  -webkit-transform: translate3d(0,0,1px);
+  transform: translate3d(0,0,1px);
 }
 
 .mat-header-row {
@@ -60,6 +61,7 @@ md-card {
   background: #fff; 
   z-index: 5;
   width: 96.2%;
+  transform-style: preserve-3d;
 }
 
 .mat-header-cell .mat-sort-header-sorted {
