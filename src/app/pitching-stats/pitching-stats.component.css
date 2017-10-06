@@ -47,21 +47,23 @@ md-card {
   overflow: scroll; 
 }
 
-/*.mat-header-row-res {
-  -webkit-transform: translate3d(0,0,0);
+.mat-header-row-res {
+  /*-webkit-transform: translate3d(0,0,0);
   transform: translate3d(0,0,0);
   transform-style: preserve-3d;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-}*/
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);*/
+  clip: rect(auto, auto, auto, auto);
+  clip-path: inset(0 0 0 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
 
 .mat-header-row {
   position: absolute; 
   top: 0; 
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
   background: #fff; 
   z-index: 5;
   width: 96.2%;
