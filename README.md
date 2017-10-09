@@ -411,6 +411,7 @@ export class AppComponent implements OnInit {
 ```
 
 * This is an example of getting lots of data to store to your db in firebase. Avoid making a lot of api calls like shown above each time the app loads. 
+* Tread carefully when making this many get requests to an api. Most api's have request limits. MySportsFeeds has a 250 request limit which resets every 5 minutes. Meaning if there are more than 250 requests in less than 5 minutes, following requests will be rejected until the 5 minute hold resets.  
 
 ### Make custom data not provided by the api.
 In this app I use one array to show all data in the views. I use 5 different endpoints to get different information about each player. In order to sort the data and apply it to the correct player I use the responses returned by the endpoints, for each loop through the response and match data by player ID so that the custom data can be added to the player object and stored in one array for the view. 
