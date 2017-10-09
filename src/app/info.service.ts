@@ -36,9 +36,6 @@ export class InfoService {
     options = o;
   }
 
-  // getUrl() {
-
-  // }
 
   getDailySchedule() {
     //get all games for today get game ID and find a pitchers opponent

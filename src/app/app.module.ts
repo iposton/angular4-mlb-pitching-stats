@@ -48,16 +48,14 @@ import { CdkTableModule } from '@angular/cdk';
 import { AppComponent } from './app.component';
 import { OrderBy } from './orderby.pipe';
 import {InfoService} from './info.service';
-import {FirebaseService} from './firebase.service';
 
+import { FirebaseService } from './firebase.service';
 import { AngularFireModule } from 'angularfire2';
-
-// New imports to update based on AngularFire2 version 4
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
+
 import { PlayerComponent } from './player/player.component';
 import { PitchingStatsComponent, MyDialog } from './pitching-stats/pitching-stats.component';
-
 
 export const firebaseConfig = {
   apiKey: masterFirebaseConfig.apiKey,

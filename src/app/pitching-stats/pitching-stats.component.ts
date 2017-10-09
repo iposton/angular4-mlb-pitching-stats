@@ -1,11 +1,7 @@
-import { Component, ViewChild, Inject, OnInit, Renderer2 } from '@angular/core';
-import { MdDialog } from '@angular/material';
-import { MdDialogRef } from "@angular/material";
-import { MD_DIALOG_DATA } from '@angular/material';
+import { Component, ViewChild, Inject, OnInit } from '@angular/core';
+import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 import { DataSource } from '@angular/cdk';
-import { MdPaginator } from '@angular/material';
 import { MdSort } from '@angular/material';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { InfoService } from '../info.service';
 import { FirebaseService } from '../firebase.service';
@@ -68,22 +64,8 @@ export class PitchingStatsComponent implements OnInit {
 
   @ViewChild(MdSort) sort: MdSort;
 
-  constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http, private renderer: Renderer2) { 
-    this.players = this.infoService.getSentStats(); 
-    this.scrollHeight = (window.screen.width);
-    this.renderer.listen('window', 'scroll', (evt) => { 
-      console.log('scroll'); 
-      this.scrollTop = document.getElementById('exampleContainer').offsetHeight;
-       console.log(document.getElementById('exampleContainer').offsetHeight, 'height');
-    });
-    
-
-    if (window.innerWidth < 900) {
-      this.scrollHeight = 1600+'px';
-    } else {
-      console.log(window.innerWidth, 'screen width');
-      this.scrollHeight = 100+'vh';
-    }
+  constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http) { 
+    this.players = this.infoService.getSentStats();   
   }
 
 
@@ -326,7 +308,7 @@ export class PitchingStatsComponent implements OnInit {
                     data.player.americanLeaguePlayoff = true;
                 }
 
-                if (data.team.Abbreviation === 'LA' || data.team.Abbreviation === 'WAS' || data.team.Abbreviation === 'CHC' || data.team.Abbreviation === 'ARI' || data.team.Abbreviation === 'COL' ) {
+                if (data.team.Abbreviation === 'LAD' || data.team.Abbreviation === 'WAS' || data.team.Abbreviation === 'CHC' || data.team.Abbreviation === 'ARI' || data.team.Abbreviation === 'COL' ) {
                     data.player.nationalLeaguePlayoff = true;
                 }
 
@@ -435,10 +417,6 @@ export class PitchingStatsComponent implements OnInit {
     // console.log('width over 600px');
   }
 
-  public onScroll () {
-      this.scrollTop = window.document.getElementById('exampleContainer').scrollTop;
-       console.log(this.scrollTop, 'scrolltop');
-    }
 
 }
 
