@@ -303,13 +303,13 @@ export class AppComponent implements OnInit {
            .addData(info.player);
       }
       
-      this.getData();
+      this.loadOtherData();
 
    }
 
-   getData() {
+   loadOtherData() {
     this.firebaseService
-      .getFastballData()
+      .getData()
         .subscribe(firebaseData => {
         console.log(firebaseData, 'got response from firebase...');
         this.showData = firebaseData;
@@ -336,8 +336,79 @@ export class AppComponent implements OnInit {
 
 ```
 
-* Above is a very basic way to save and get data from firebase. Normally this wouldn't be a way to use firebase if you already have data coming in from the api. In this app I use firebase to store a week's worth of game data in firebase to avoid having to call the api 70 times to get the data when the app loads. This is a reason to use firebase, to store large amounts of data.
+* Above is a very basic way to save and get data from firebase. Normally this wouldn't be a way to use firebase if you already have data coming in from the api. In this app I use firebase to store a week's worth of game data in firebase to avoid having to call the api 70 times to get the data when the app loads. This is a reason to use firebase, to store large amounts of data. See below for example of making several api calls dynamically. 
 
+### Make multiple api calls dynamically.
+In this app I needed to get a week worth of game data. To do this I need to get the schedule for the week and strip all the game ID's then dynamically assign the id to call for each game and get detailed stats from that game.
+
+* In `app.component.ts` `import 'rxjs/add/observable/forkJoin';`. 
+* Make an api call to MySportsFeeds api to get all games played last week.
+* ForEach loop through the response and use forkJoin to call for sever game results by using the game ID dynamically in the url (endpoint).
+
+```ts
+
+//app.compoent.ts
+
+import { Component, ViewChild, Inject, OnInit } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { Http, Response, RequestOptions, Headers, Request, RequestMethod } from '@angular/http';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/observable/forkJoin';
+
+let headers = new Headers({ "Authorization": "Basic " + btoa('username' + ":" + 'password') });
+let options = new RequestOptions({ headers: headers });
+let url = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/full_game_schedule.json?date=from-8-days-ago-to-2-days-ago';
+
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+
+export class AppComponent implements OnInit {
+
+   activePlayerData: Array<any>;
+   cumulativePlayerStatData: Array<any>;
+   showData: Array<any>;
+
+   constructor(private http: Http) {}
+  
+    loadData() {
+      this.http.get(url, options)
+        .map(response => response.json())
+          .subscribe(res => {
+            console.log( res['fullgameschedule'].gameentry, 'games from last week!');
+            
+            //FORKJOIN HELPS MAKE SEVERAL API CALLS
+            //STRIP THE GAME ID AND USE IT dynamically IN THE API CALL + g.id +
+            Observable.forkJoin(
+              res['fullgameschedule'].gameentry.map(
+                 g =>
+                 this.http.get('https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/game_playbyplay.json?gameid=' + g.id + '&status=final', options)
+                 .map(response => response.json())
+               )
+             ).subscribe(res => {
+                 //THIS WILL LOG GAME RESULTS SUCH AS HITS/PITCHES/STOLENBASES/RUNS...
+                 let i;
+                 res.forEach((item, index) => {
+                   i = index;
+                   console.log(res[i]['gameplaybyplay'], 'got game data!');
+                 })
+              })
+          })
+   }
+
+    
+   ngOnInit() {
+    this.loadData();
+   }
+
+}
+
+```
+
+* This is an example of getting lots of data to store to your db in firebase. Avoid making a lot of api calls like shown above each time the app loads. 
 
 ### Make custom data not provided by the api.
 In this app I use one array to show all data in the views. I use 5 different endpoints to get different information about each player. In order to sort the data and apply it to the correct player I use the responses returned by the endpoints, for each loop through the response and match data by player ID so that the custom data can be added to the player object and stored in one array for the view. 
@@ -590,78 +661,6 @@ export class MyDataSource extends DataSource <Data> {
 </div>
 
 ```
-
-### Make multiple api calls dynamically.
-In this app I needed to get a week worth of game data. To do this I need to get the schedule for the week and strip all the game ID's then dynamically assign the id to call for each game and get detailed stats from that game.
-
-* In `app.component.ts` `import 'rxjs/add/observable/forkJoin';`. 
-* Make an api call to MySportsFeeds api to get all games played last week.
-* ForEach loop through the response and use forkJoin to call for sever game results by using the game ID dynamically in the url (endpoint).
-
-```ts
-
-//app.compoent.ts
-
-import { Component, ViewChild, Inject, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Http, Response, RequestOptions, Headers, Request, RequestMethod } from '@angular/http';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/observable/forkJoin';
-
-let headers = new Headers({ "Authorization": "Basic " + btoa('username' + ":" + 'password') });
-let options = new RequestOptions({ headers: headers });
-let url = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/full_game_schedule.json?date=from-8-days-ago-to-2-days-ago';
-
-
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
-})
-
-export class AppComponent implements OnInit {
-
-   activePlayerData: Array<any>;
-   cumulativePlayerStatData: Array<any>;
-   showData: Array<any>;
-
-   constructor(private http: Http) {}
-  
-    loadData() {
-      this.http.get(url, options)
-        .map(response => response.json())
-          .subscribe(res => {
-            console.log( res['fullgameschedule'].gameentry, 'games from last week!');
-            
-            //FORKJOIN HELPS MAKE SEVERAL API CALLS
-            //STRIP THE GAME ID AND USE IT dynamically IN THE API CALL + g.id +
-            Observable.forkJoin(
-              res['fullgameschedule'].gameentry.map(
-                 g =>
-                 this.http.get('https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/game_playbyplay.json?gameid=' + g.id + '&status=final', options)
-                 .map(response => response.json())
-               )
-             ).subscribe(res => {
-                 //THIS WILL LOG GAME RESULTS SUCH AS HITS/PITCHES/STOLENBASES/RUNS...
-                 let i;
-                 res.forEach((item, index) => {
-                   i = index;
-                   console.log(res[i]['gameplaybyplay'], 'got game data!');
-                 })
-              })
-          })
-   }
-
-    
-   ngOnInit() {
-    this.loadData();
-   }
-
-}
-
-```
-
-* This is an example of getting lots of data to store to your db in firebase. Avoid making a lot of api calls like shown above each time the app loads. 
 
 ### Angular-material2 mdDialog module.
 In a single page app modals are a cool way to show some specific data in the same view. In this app there are 275 rows of individual baseball players and their stats. I have made each row enabled to be clicked to pop up a modal with more specific real time stats. 
