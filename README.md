@@ -37,7 +37,7 @@ This app can help explain how to fetch data using [Angular's HttpClient Module](
 ### Get data from api with HttpClient module
 The first thing I want to do in this app is get a list of all the pitchers in major league baseball. I used the [MySportsFeeds API](https://www.mysportsfeeds.com/data-feeds/api-docs/#) to find the correct endpoint to get all pitchers. I am able to use Angular's http module to send a GET request for data using this endpoint `https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-regular/active_players.json?position=P` found in the api's documentation. 
 
-```js
+```ts
 
 //app.component.ts 
 
@@ -111,7 +111,7 @@ Adding the environment variable for the MySportsFeeds api. I didn't want to shar
 
 * Use the [Heroku Client API](https://github.com/heroku/node-heroku-client) to retrieve the API_TOKEN from the app and then send it to the front-end of the angular app like this. 
 
-```js
+```ts
 
 //app.js 
 
@@ -195,7 +195,7 @@ References for deploying Angular4 to heroku: [https://medium.com/@ervib/deploy-a
 * Import Firebase settings to `app.module.ts`. 
 * Initialize app in the imports array in `ngModule`.
 
-```js
+```ts
 
 //app.module.ts
 
@@ -205,10 +205,10 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 
 export const firebaseConfig = {
-  apiKey: masterFirebaseConfig.apiKey,
-  authDomain: masterFirebaseConfig.authDomain,
-  databaseURL: masterFirebaseConfig.databaseURL,
-  storageBucket: masterFirebaseConfig.storageBucket
+  apiKey: ***,
+  authDomain: ***,
+  databaseURL: ***,
+  storageBucket: ***
 };
 
 @NgModule({
@@ -223,14 +223,13 @@ export const firebaseConfig = {
   providers: [FirebaseService],
 })
 
-
 ``` 
 
 ### Save Data to FireBase.
 * Create a `firebase.service.ts` with an addData function to call the firebase db. 
 * Import the `firebase.service` into the `app.component` and call the addData function passing in the data to be save. 
 
-```js
+```ts
 
 //firebase.service.ts
 
@@ -253,11 +252,10 @@ export class FirebaseService {
     this.items.push(stat);
   }
 
-  getFastballData() {
+  getData() {
     return  this.items = this.af.list('/data');
   }
 }
-
 
 ```
 
@@ -265,7 +263,7 @@ export class FirebaseService {
 * Make a function called getData in the `firebase.service` file.
 * Call the getData function from `app.component` and save into an array to access it in the html.
 
-```js
+```ts
 
 //app.compoent.ts
 
@@ -324,7 +322,6 @@ export class AppComponent implements OnInit {
 
 }
 
-
 ```
 
 ```html
@@ -336,7 +333,6 @@ export class AppComponent implements OnInit {
     {{ data.player.FirstName + ' ' + data.player.LastName + ' - ' + data.team.Abbreviation }}
   </li>
 </ul>
-
 
 ```
 
@@ -352,7 +348,7 @@ In this app I use one array to show all data in the views. I use 5 different end
 * If player ID is a match create a new key on the player object and assign a value.
 * After the forEach loop is done assign the array to a new Array for the view to display the custom data. 
 
-```js
+```ts
 
 //app.compoent.ts
 
@@ -404,31 +400,28 @@ export class AppComponent implements OnInit {
       if (this.cumulativePlayerStatData && this.activePlayerData) {
         //NESTED FOREACH LOOP
         for (let info of this.activePlayerData) { 
-         for (let data of this.cumulativePlayerStatData) {
-          //CHECK IF PLAYER ID IS MATCH THEN APPLY CUSTOM DATA TO BE ADDED
-          //TO cumulativePlayerStatData PLAYER ITEMS
-          if (data.player.ID === info.player.ID) {
-            data.player.image = info.player.officialImageSrc;
-            data.player.age = info.player.Age;
-            data.player.city = info.player.BirthCity;
-            data.player.country = info.player.BirthCountry;
-            data.player.Height = info.player.Height;
-            data.player.Weight = info.player.Weight;
-            data.player.IsRookie = info.player.IsRookie;
+          for (let data of this.cumulativePlayerStatData) {
+            //CHECK IF PLAYER ID IS MATCH THEN APPLY CUSTOM DATA TO BE ADDED
+            //TO cumulativePlayerStatData PLAYER ITEMS
+            if (data.player.ID === info.player.ID) {
+              data.player.image = info.player.officialImageSrc;
+              data.player.age = info.player.Age;
+              data.player.city = info.player.BirthCity;
+              data.player.country = info.player.BirthCountry;
+              data.player.Height = info.player.Height;
+              data.player.Weight = info.player.Weight;
+              data.player.IsRookie = info.player.IsRookie;
 
-            //SHOWDATA IS CALLED IN THE HTML WITH NEW CUSTOM DATA ADDED
-            this.showData = this.cumulativePlayerStatData;
+              //SHOWDATA IS CALLED IN THE HTML WITH NEW CUSTOM DATA ADDED
+              this.showData = this.cumulativePlayerStatData;
+            } 
           }
-          
-         }
         }
-      }
-
-      
+      } 
    }
     
    ngOnInit() {
-    this.loadData();
+     this.loadData();
    }
 
 }
@@ -445,7 +438,6 @@ export class AppComponent implements OnInit {
       <br> Birth City: {{data.player.city +', '+ data.player.country}}
       <br> Number: {{data.player.JerseyNumber}}</p>
 </div>
-
 
 ```
 
@@ -606,7 +598,7 @@ In this app I needed to get a week worth of game data. To do this I need to get 
 * Make an api call to MySportsFeeds api to get all games played last week.
 * ForEach loop through the response and use forkJoin to call for sever game results by using the game ID dynamically in the url (endpoint).
 
-```js
+```ts
 
 //app.compoent.ts
 
