@@ -23,7 +23,7 @@ This app can help explain how to fetch data using [Angular's HttpClient Module](
 * Node.js (version 6.10.3)     
 * [angular material2](https://github.com/angular/material2) (version 2.0.0-beta.8)
 * Heroku [Set up a free account ](https://www.heroku.com/)
-* Firebase (version 4.2.0) 
+* [Firebase](https://firebase.google.com/) (version 4.2.0) 
 * AngularFire2 (version 4.0.0-rc.1)
 * NPM (version 5.2.0)
 * Heroku Client (version 3.0.3)
@@ -93,7 +93,7 @@ export class AppComponent implements OnInit {
 * For Heroku this app uses a node.js server <code>app.js</code> with express.
 * All routes will be going to <code>dist/index.html</code>. 
 * Run <code>ng build</code> to build the app in the dist directory.
-* Run <code>node app.js</code> to serve the app at <code>http://localhost:3001</code>.
+* Run <code>node app.js</code> to serve the app at `http://localhost:3001`.
 * The <code>Procfile</code> in this app's root specifies the server for heroku to use.
 
 ```
@@ -172,6 +172,7 @@ After you <code>git push</code> to your repo follow the steps below. Assuming yo
   If there were problems during deploy and you are trying this from scratch here are some requirements heroku needs to deploy.
   <li>Have <code>@angular/cli</code> and <code>@angular/compiler-cli</code> listend under dependencies in <code>package.json</code>.</li>
   <li>have a <code>server/routes</code> directory with <code>api.js</code> </li>
+</ol>
 
 ```js
 
@@ -195,6 +196,7 @@ References for deploying Angular4 to heroku: [https://medium.com/@ervib/deploy-a
 ### Setting up FireBase.
 * Install these modules for firebase config. Run `npm install angularfire2 firebase --save`.
 * Import Firebase settings to `app.module.ts`. 
+* Create a [firebase db](https://firebase.google.com/) and config the db in `app.module.ts`.  
 * Initialize app in the imports array in `ngModule`.
 
 ```ts
@@ -207,10 +209,10 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 
 export const firebaseConfig = {
-  apiKey: ***,
-  authDomain: ***,
-  databaseURL: ***,
-  storageBucket: ***
+  apiKey: *******,
+  authDomain: *******,
+  databaseURL: *******,
+  storageBucket: *******
 };
 
 @NgModule({
