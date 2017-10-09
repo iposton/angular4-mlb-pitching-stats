@@ -106,10 +106,12 @@ web: node app.js
 * This <code>"main": "app.js"</code> line in package.json specifies how to tell heroku to look for <code>app.js</code>.
 * Before pushing to github, before heroku deploy set Config Variables.  
 
-Adding the environment variable for the MySportsFeeds api. I didn't want to share my api headers information in my github repository so I added my password to my Config Variables for heroku to use in the app settings from the Heroku dashboard. I stored the password in my heroku app by going to the app settings in my heroku dashboard. Click on Config Variables and add the key (name) and value (password) there. It will be secured safely away from human view. You can call it to the client side by adding this code to the app.js file. I called my env API_TOKEN and made the value MySportsFeeds password.
+Adding the environment variable for the MySportsFeeds api. I didn't want to share my api headers information in my github repository so I added my password to my Config Variables for heroku to use in the app settings from the Heroku dashboard. I stored the password in my heroku app by going to the app settings in my heroku dashboard. Click on Config Variables and add the key (name) and value (password) there. It will be secured safely away from human view. You can call it to the client side by adding this code to the app.js file. I called my env `TOKEN` and made the value MySportsFeeds password.
 
 
-* Use the [Heroku Client API](https://github.com/heroku/node-heroku-client) to retrieve the API_TOKEN from the app and then send it to the front-end of the angular app like this. 
+* Use the [Heroku Client API](https://github.com/heroku/node-heroku-client) to retrieve the `TOKEN` from the app and then send it to the front-end of the angular app like this.
+
+* I used my heroku account token to authenticate Heroku Client. I saved it to the config vars of this app as `API_TOKEN`.
 
 ```ts
 
