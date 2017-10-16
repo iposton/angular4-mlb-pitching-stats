@@ -26,6 +26,10 @@ my-dialog .fav-pitch {
   margin-bottom: 15px;
 }
 
+my-dialog .live-pitch {
+  background: #2ecc71;
+}
+
 .mat-dialog-container {
   width: 600px;
 }

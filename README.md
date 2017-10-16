@@ -162,6 +162,45 @@ const server = http.createServer(app);
 server.listen(port, () => console.log(`Running on localhost:${port}`));
 
 ```
+* Get the environment variable sent from heroku to app.component using Http. 
+
+```ts
+
+//app.component.ts 
+
+import { Component, ViewChild, Inject, OnInit } from '@angular/core';
+import { Http, Response, RequestOptions, Headers, Request, RequestMethod } from '@angular/http';
+import 'rxjs/add/operator/map';
+
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+
+export class AppComponent implements OnInit {
+   
+  defineToken: string = '';
+
+   constructor(private http: Http) {}
+
+   getEnv() {
+    console.log("trying to get heroku env...");
+      this.http.get('/heroku-env').map(response => response)
+      .subscribe(res => {
+        this.defineToken = res._body;
+        let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + this.defineToken) });
+        let options = new RequestOptions({ headers: headers });
+      });
+   }
+
+   ngOnInit() {
+    this.getEnv();
+   }
+}
+
+```
 
 After you <code>git push</code> to your repo follow the steps below. Assuming you have a heroku account and installed the heroku toolbelt. 
 <ol>
@@ -676,6 +715,32 @@ This app uses [angular material2 pop up modal](https://material.angular.io/compo
 * Import it to `app.module` `import {MdDialogModule} from '@angular/material`;
 * Set it up in `app.component` and make an open function for the modal.
 * Create a click event in `app.component.html` to pass in the player data and open the modal from the dataTable. `<md-row (click)="open($event, data)" *cdkRowDef="let data; columns: displayedColumns; let i=index;"></md-row>` 
+* Import the MyDialog component to `app.module`. `import { AppComponent, MyDiaog } from './app.component';` and add MyDialog to the `ngModule`.
+
+```ts
+
+//app.module.ts
+
+import { AppComponent, MyDiaog } from './app.component';
+
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    MyDialog
+  ],
+  imports: [
+    MdTableModule,
+    MdDialogModule
+  ]
+  providers: [FirebaseService],
+  entryComponents: [
+    MyDialog
+  ],
+  bootstrap: [AppComponent]
+})
+
+
 
 ```ts
 

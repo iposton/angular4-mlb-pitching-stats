@@ -27,6 +27,8 @@ export class InfoService {
   gameid: Observable < any > = null;
   daily: Observable < any > = null;
   schedule: Observable < any > = null;
+  score: Observable < any > = null;
+  play: Observable <any> = null;
 
   constructor(private http: Http) {}
 
@@ -121,5 +123,27 @@ export class InfoService {
         .map(response => response.json())
     }
     return this.daily;
+  }
+
+  getScore() {
+
+    if (!this.score) {
+      let url5 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/scoreboard.json?fordate='+dailyDate;
+      console.log('getting daily scores of todays games from API...');
+      this.score = this.http.get(url5, options)
+        .map(response => response.json())
+    }
+    return this.score;
+  }
+
+  getPlay() {
+
+    if (!this.play) {
+      let url6 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/game_playbyplay.json?gameid=20171004-COL-ARI;'
+      console.log('getting daily scores of todays games from API...');
+      this.play = this.http.get(url6, options)
+        .map(response => response.json())
+    }
+    return this.play;
   }
 }

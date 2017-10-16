@@ -14,3 +14,7 @@ img {
 .player-selected {
   display: normal;
 }
+
+md-card p {
+  font-size: 20px;
+}

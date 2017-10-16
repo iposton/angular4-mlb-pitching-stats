@@ -21,7 +21,7 @@
       </md-header-cell>
       <md-cell *cdkCellDef="let i=index; let data;">
         <div fxHide [fxHide.gt-xs]="isVisibleOnDesktop()">
-          <b>{{i+1}}. </b>{{ data.player.FirstName + ' ' + data.player.LastName + ' - ' + data.team.Abbreviation}}
+          <b>{{i+1}}. </b>{{ data.player.FirstName + ' ' + data.player.LastName + ' - ' + data.team.Abbreviation }}
           <div *ngIf="data.player.playingToday" class="live-dot"></div>&nbsp;
           <div *ngIf="data.player.startingToday" class="live-dot-orange"></div>
         </div>

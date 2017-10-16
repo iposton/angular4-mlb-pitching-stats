@@ -31,6 +31,7 @@ export class PitchingStatsComponent implements OnInit {
   playerInfo: Array < any > ;
   statData: Array < any > ;
   dailyStats: Array < any > ;
+  score: Array < any > ;
   dailySchedule: Array < any > ;
   fastballData: Array < any > ;
   gameIdData: Array < any > ;
@@ -209,10 +210,14 @@ export class PitchingStatsComponent implements OnInit {
           console.log(res, "Daily stats...");
           this.dailyStats = res['dailyplayerstats'].playerstatsentry;
         })
+      this.infoService
+        .getScore().subscribe(res => {
+          console.log(res['scoreboard'].gameScore, "Score...");
+          this.score = res['scoreboard'].gameScore;
+        })
     } else {
       console.log('No games then no daily stats either. :(');
     }
-
 
 
     this.infoService
@@ -260,23 +265,30 @@ export class PitchingStatsComponent implements OnInit {
           }
 
           if (this.myData && this.dailySchedule) {
-
             console.log('start sorting data for daily schedule...');
             for (let schedule of this.dailySchedule) {
 
               for (let sdata of this.myData) {
-
+                
                 if (schedule.awayTeam.Name === sdata.team.Name) {
+                  sdata.player.gameTime = schedule.time;
+                  sdata.team.gameField = schedule.location;
+                  sdata.team.gameId = schedule.id;
+                  sdata.player.gameLocation = "away";
                   sdata.team.opponent = schedule.homeTeam.City + ' ' + schedule.homeTeam.Name;
-                  //console.log(sdata, 'opponent home team...');
+                  sdata.team.opponentCity = schedule.homeTeam.City;
+
                 }
                 if (schedule.homeTeam.Name === sdata.team.Name) {
+                  sdata.player.gameTime = schedule.time;
+                  sdata.team.gameField = schedule.location;
+                  sdata.team.gameId = schedule.id;
+                  sdata.player.gameLocation = "home";
                   sdata.team.opponent = schedule.awayTeam.City + ' ' + schedule.awayTeam.Name;
-                  //console.log(sdata, 'opponent away team...');
+                  sdata.team.opponentCity = schedule.awayTeam.City;
                 }
               }
             }
-
           }
 
           if (this.myData && this.dailyStats) {
@@ -293,6 +305,91 @@ export class PitchingStatsComponent implements OnInit {
                   mdata.player.strikeoutsToday = daily.stats.PitcherStrikeouts['#text'];
                   mdata.player.hitsallowedToday = daily.stats.HitsAllowed['#text'];
                   mdata.player.pitchesthrownToday = daily.stats.PitchesThrown['#text'];
+
+                }
+              }
+            }
+          }
+
+          if (this.myData && this.score) {
+            console.log('start sorting data for scoreboard stats...');
+            for (let sc of this.score) {
+              for (let pdata of this.myData) {
+                if (sc.game.awayTeam.Abbreviation === pdata.team.Abbreviation) {
+                  //get score for home and away
+                  //console.log(sc, 'score items');
+                  pdata.team.opponentAbbreviation = sc.game.homeTeam.Abbreviation;
+                  pdata.team.teamScore = sc.awayScore;
+                  pdata.team.opponentScore = sc.homeScore;
+                  pdata.team.currentInning = sc.currentInning;
+                  pdata.team.currentInningHalf = sc.currentInningHalf;
+                  pdata.team.isGameOver = sc.isCompleted;
+                  pdata.team.isGameInProgress = sc.isInProgress;
+                  pdata.team.isGameUnplayed = sc.isUnplayed;
+                  if (sc.playStatus != null) {
+                    //console.log(sc.playStatus, 'play status');
+                    pdata.team.balls = sc.playStatus.ballCount;
+                    pdata.team.strikes = sc.playStatus.strikeCount;
+                    pdata.team.outs = sc.playStatus.outCount;
+                    if (sc.playStatus['batter'] != null) {
+                     pdata.team.currentBatter = sc.playStatus['batter'].FirstName + ' '+ sc.playStatus['batter'].LastName; 
+                    }
+                    if (sc.playStatus['firstBaseRunner'] != null) {
+                     pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' '+ sc.playStatus['firstBaseRunner'].LastName; 
+
+                    }
+                    if (sc.playStatus['secondBaseRunner'] != null) {
+                     // pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' '+ sc.playStatus['firstBaseRunner'].LastName; 
+                      pdata.team.secondBaseRunner = sc.playStatus['secondBaseRunner'].FirstName + ' '+ sc.playStatus['secondBaseRunner'].LastName;
+                     // pdata.team.thirdBaseRunner = sc.playStatus['thirdBaseRunner'].FirstName + ' '+ sc.playStatus['thirdBaseRunner'].LastName;
+                    }
+                    if (sc.playStatus['thirdBaseRunner'] != null) {
+                     // pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' '+ sc.playStatus['firstBaseRunner'].LastName; 
+                     // pdata.team.secondBaseRunner = sc.playStatus['secondBaseRunner'].FirstName + ' '+ sc.playStatus['secondBaseRunner'].LastName;
+                      pdata.team.thirdBaseRunner = sc.playStatus['thirdBaseRunner'].FirstName + ' '+ sc.playStatus['thirdBaseRunner'].LastName;
+                    }
+                    pdata.team.currentPitcher = sc.playStatus.pitcher['ID'];
+                 } 
+
+                  //get runners on base from playStatus
+                  
+                }
+                if (sc.game.homeTeam.Abbreviation === pdata.team.Abbreviation) {
+                  pdata.team.opponentAbbreviation = sc.game.awayTeam.Abbreviation;
+                  pdata.team.opponentScore = sc.awayScore;
+                  pdata.team.teamScore = sc.homeScore;
+                  pdata.team.currentInning = sc.currentInning;
+                  pdata.team.currentInningHalf = sc.currentInningHalf;
+                  pdata.team.isGameOver = sc.isCompleted;
+                  pdata.team.isGameInProgress = sc.isInProgress;
+                  pdata.team.isGameUnplayed = sc.isUnplayed;
+                  if (sc.playStatus != null) {
+                    console.log(sc.playStatus, 'play status');
+                    pdata.team.balls = sc.playStatus.ballCount;
+                    pdata.team.strikes = sc.playStatus.strikeCount;
+                    pdata.team.outs = sc.playStatus.outCount;
+                    if (sc.playStatus['batter'] != null) {
+                     pdata.team.currentBatter = sc.playStatus['batter'].FirstName + ' '+ sc.playStatus['batter'].LastName; 
+                    }
+                    if (sc.playStatus['firstBaseRunner'] != null) {
+                     pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' '+ sc.playStatus['firstBaseRunner'].LastName; 
+
+                    }
+                    if (sc.playStatus['secondBaseRunner'] != null) {
+                     // pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' '+ sc.playStatus['firstBaseRunner'].LastName; 
+                      pdata.team.secondBaseRunner = sc.playStatus['secondBaseRunner'].FirstName + ' '+ sc.playStatus['secondBaseRunner'].LastName;
+                     // pdata.team.thirdBaseRunner = sc.playStatus['thirdBaseRunner'].FirstName + ' '+ sc.playStatus['thirdBaseRunner'].LastName;
+                    }
+                    if (sc.playStatus['thirdBaseRunner'] != null) {
+                     // pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' '+ sc.playStatus['firstBaseRunner'].LastName; 
+                     // pdata.team.secondBaseRunner = sc.playStatus['secondBaseRunner'].FirstName + ' '+ sc.playStatus['secondBaseRunner'].LastName;
+                      pdata.team.thirdBaseRunner = sc.playStatus['thirdBaseRunner'].FirstName + ' '+ sc.playStatus['thirdBaseRunner'].LastName;
+                    }
+
+
+                    
+                    pdata.team.currentPitcher = sc.playStatus.pitcher['ID'];
+                 }
 
                 }
               }
@@ -436,7 +533,8 @@ export class PitchingStatsComponent implements OnInit {
       <br> Number: {{data.player.JerseyNumber}}
       <br> Opponent: <span *ngIf="data.team.opponent;then content else other_content"></span> <ng-template #content>{{data.team.opponent}}</ng-template> <ng-template #other_content>No game today.</ng-template>
       <br><span *ngIf="data.player.americanLeaguePlayoff || data.player.nationalLeaguePlayoff" style="background:#2ecc71; color:#fff; padding:1px; border-radius:2px;">{{data.team.City}} made the playoffs. </span>
-      <br><span *ngIf="data.player.startingToday" style="background:#d35400; color:#fff; padding:1px; border-radius:2px;">Starting in today's game. </span></p>
+      <br><span *ngIf="data.player.startingToday" style="background:#2ecc71; color:#fff; padding:1px; border-radius:2px;">Starter for today's {{data.player.gameLocation}} game. </span>
+      <br><span *ngIf="data.team.opponent">Game info: {{data.player.gameTime}} EST, {{data.team.gameField}} </span> </p>
   </md-grid-tile>
 </md-grid-list>
 <md-grid-list cols="3" rowHeight="50px">
@@ -450,18 +548,10 @@ export class PitchingStatsComponent implements OnInit {
     <h1><b>K's:</b> {{ data.stats.PitcherStrikeouts['#text'] }}</h1>
   </md-grid-tile>
 </md-grid-list>
-<div class="fav-pitch">
-  <h2 *ngIf="data.player.favPitch == data.stats.Pitcher2SeamFastballs['#text']">Uses the 2-Seam Fastball {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-  <h2 *ngIf="data.player.favPitch == data.stats.Pitcher4SeamFastballs['#text']">Uses the 4-Seam Fastball {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-  <h2 *ngIf="data.player.favPitch == data.stats.PitcherChangeups['#text']">Uses the Changeup {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-  <h2 *ngIf="data.player.favPitch == data.stats.PitcherCurveballs['#text']">Uses the Curveball {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-  <h2 *ngIf="data.player.favPitch == data.stats.PitcherCutters['#text']">Uses the Cutter {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-  <h2 *ngIf="data.player.favPitch == data.stats.PitcherSliders['#text']">Uses the Slider {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-  <h2 *ngIf="data.player.favPitch == data.stats.PitcherSinkers['#text']">Uses the Sinker {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-  <h2 *ngIf="data.player.favPitch == data.stats.PitcherSplitters['#text']">Uses the Splitter {{data.player.favPitchPercent}}% of pitches thrown.</h2>
-</div>
-<div class="fav-pitch" *ngIf="data.player.pitchSpeedAvg">
-  <h2>Avg pitch speed is {{data.player.pitchSpeedAvg}}mph</h2>
+<div class="fav-pitch live-pitch" *ngIf="data.player.winToday == '0' && data.player.saveToday == '0' && data.player.loseToday == '0'">
+ (live stats) Game Time: {{data.player.gameTime}} EST <span *ngIf="data.player.gameLocation === 'away'">@{{data.team.opponentCity}}</span>
+  <h2>{{ data.player.FirstName + ' ' + data.player.LastName}} pitched  <div *ngIf="data.player.inningsToday === '1.0';then pt else other_pt"></div> <ng-template #pt>1 inning</ng-template> <ng-template #other_pt>{{data.player.inningsToday}} innings</ng-template>, {{data.player.strikeoutsToday}}  <div *ngIf="data.player.strikeoutsToday === '1';then k else other_k"></div> <ng-template #k>strikeout</ng-template> <ng-template #other_k>strikeouts</ng-template> and gave up {{data.player.earnedrunsToday}} <div *ngIf="data.player.earnedrunsToday === '1';then r else other_r"></div> <ng-template #r>run</ng-template> <ng-template #other_r>runs</ng-template> today!</h2>
+  <button md-button class="more-stats-btn" [routerLink]="['/daily-stats', data.player.ID]" (click)="dialogRef.close()">MORE STATS</button>
 </div>
 <div class="fav-pitch" *ngIf="data.player.winToday == '1'">
   <h2>{{ data.player.FirstName + ' ' + data.player.LastName}} got a Win today!</h2>
@@ -475,9 +565,18 @@ export class PitchingStatsComponent implements OnInit {
   <h2>{{ data.player.FirstName + ' ' + data.player.LastName}} got a Save today!</h2>
     <button md-button class="more-stats-btn" [routerLink]="['/daily-stats', data.player.ID]" (click)="dialogRef.close()">MORE STATS</button>
 </div>
-<div class="fav-pitch" *ngIf="data.player.winToday == '0' && data.player.saveToday == '0' && data.player.loseToday == '0'">
-  <h2>{{ data.player.FirstName + ' ' + data.player.LastName}} pitched  <div *ngIf="data.player.inningsToday === '1.0';then pt else other_pt"></div> <ng-template #pt>1 inning</ng-template> <ng-template #other_pt>{{data.player.inningsToday}} innings</ng-template>, {{data.player.strikeoutsToday}}  <div *ngIf="data.player.strikeoutsToday === '1';then k else other_k"></div> <ng-template #k>strikeout</ng-template> <ng-template #other_k>strikeouts</ng-template> and gave up {{data.player.earnedrunsToday}} <div *ngIf="data.player.earnedrunsToday === '1';then r else other_r"></div> <ng-template #r>run</ng-template> <ng-template #other_r>runs</ng-template> today!</h2>
-  <button md-button class="more-stats-btn" [routerLink]="['/daily-stats', data.player.ID]" (click)="dialogRef.close()">MORE STATS</button>
+<div class="fav-pitch">
+  <h2 *ngIf="data.player.favPitch == data.stats.Pitcher2SeamFastballs['#text']">Uses the 2-Seam Fastball {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.Pitcher4SeamFastballs['#text']">Uses the 4-Seam Fastball {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.PitcherChangeups['#text']">Uses the Changeup {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.PitcherCurveballs['#text']">Uses the Curveball {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.PitcherCutters['#text']">Uses the Cutter {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.PitcherSliders['#text']">Uses the Slider {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.PitcherSinkers['#text']">Uses the Sinker {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+  <h2 *ngIf="data.player.favPitch == data.stats.PitcherSplitters['#text']">Uses the Splitter {{data.player.favPitchPercent}}% of pitches thrown.</h2>
+</div>
+<div class="fav-pitch" *ngIf="data.player.pitchSpeedAvg">
+  <h2>Avg pitch speed is {{data.player.pitchSpeedAvg}}mph</h2>
 </div>`,
 })
 
