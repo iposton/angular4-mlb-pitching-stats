@@ -30,6 +30,7 @@ export class PitchingStatsComponent implements OnInit {
   myData: Array < any > ;
   playerInfo: Array < any > ;
   statData: Array < any > ;
+  matchupData: Array < any > ;
   dailyStats: Array < any > ;
   score: Array < any > ;
   dailySchedule: Array < any > ;
@@ -39,6 +40,7 @@ export class PitchingStatsComponent implements OnInit {
   specificFastballData: Array < any > = [];
   specificFastballDataById: Array < any > = [];
   speedResults: Array < any > = [];
+  startersData: Array < any > = [];
   loading: boolean = true;
   live: boolean = false;
   gamesToday: boolean = false;
@@ -59,20 +61,18 @@ export class PitchingStatsComponent implements OnInit {
     'pickoffAttempts'
   ];
   dataSource: MyDataSource;
- 
-  
+
+
   pitcherspeed: { pitcher: string, pitchspeedStart: string, lastName: string };
 
   @ViewChild(MdSort) sort: MdSort;
 
-  constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http) { 
-    this.players = this.infoService.getSentStats();   
+  constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http) {
+    this.players = this.infoService.getSentStats();
   }
 
-
-
   loadEnv() {
-
+// LOAD SOME DATA WHEN CLICK ON DIALOG TO SAVE LOADING TIME. 
     this.infoService
       .getEnv().subscribe(res => {
         this.defineToken = res._body;
@@ -227,7 +227,6 @@ export class PitchingStatsComponent implements OnInit {
       });
 
     //THESE FUNCTIONS GET PLAYER INFO AND CREATE CUSTOM PLAYER VALUES BARROWED FROM SEPARATE API CALL
-
     this.infoService
       .getStats().subscribe(res => {
         console.log(res, 'got res!');
@@ -244,8 +243,7 @@ export class PitchingStatsComponent implements OnInit {
 
                 if (startid === startdata.player.ID) {
                   startdata.player.startingToday = true;
-                }
-
+                } 
               }
             }
 
@@ -305,8 +303,7 @@ export class PitchingStatsComponent implements OnInit {
                   mdata.player.strikeoutsToday = daily.stats.PitcherStrikeouts['#text'];
                   mdata.player.hitsallowedToday = daily.stats.HitsAllowed['#text'];
                   mdata.player.pitchesthrownToday = daily.stats.PitchesThrown['#text'];
-
-                }
+                } 
               }
             }
           }
@@ -315,9 +312,14 @@ export class PitchingStatsComponent implements OnInit {
             console.log('start sorting data for scoreboard stats...');
             for (let sc of this.score) {
               for (let pdata of this.myData) {
+                if (pdata.player.startingToday === true) {
+                  this.startersData.push(pdata);
+                }
+                // USE GAMEID TO CHECK FOR OPPOSING PITCHER 
                 if (sc.game.awayTeam.Abbreviation === pdata.team.Abbreviation) {
-                  //get score for home and away
+
                   //console.log(sc, 'score items');
+                  pdata.team.awayPitcher = pdata.player.FirstName + ' ' + pdata.player.LastName;
                   pdata.team.opponentAbbreviation = sc.game.homeTeam.Abbreviation;
                   pdata.team.teamScore = sc.awayScore;
                   pdata.team.opponentScore = sc.homeScore;
@@ -332,29 +334,25 @@ export class PitchingStatsComponent implements OnInit {
                     pdata.team.strikes = sc.playStatus.strikeCount;
                     pdata.team.outs = sc.playStatus.outCount;
                     if (sc.playStatus['batter'] != null) {
-                     pdata.team.currentBatter = sc.playStatus['batter'].FirstName + ' '+ sc.playStatus['batter'].LastName; 
+                      pdata.team.currentBatter = sc.playStatus['batter'].FirstName + ' ' + sc.playStatus['batter'].LastName;
                     }
                     if (sc.playStatus['firstBaseRunner'] != null) {
-                     pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' '+ sc.playStatus['firstBaseRunner'].LastName; 
+                      pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' ' + sc.playStatus['firstBaseRunner'].LastName;
 
                     }
                     if (sc.playStatus['secondBaseRunner'] != null) {
-                     // pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' '+ sc.playStatus['firstBaseRunner'].LastName; 
-                      pdata.team.secondBaseRunner = sc.playStatus['secondBaseRunner'].FirstName + ' '+ sc.playStatus['secondBaseRunner'].LastName;
-                     // pdata.team.thirdBaseRunner = sc.playStatus['thirdBaseRunner'].FirstName + ' '+ sc.playStatus['thirdBaseRunner'].LastName;
+                      pdata.team.secondBaseRunner = sc.playStatus['secondBaseRunner'].FirstName + ' ' + sc.playStatus['secondBaseRunner'].LastName;
                     }
                     if (sc.playStatus['thirdBaseRunner'] != null) {
-                     // pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' '+ sc.playStatus['firstBaseRunner'].LastName; 
-                     // pdata.team.secondBaseRunner = sc.playStatus['secondBaseRunner'].FirstName + ' '+ sc.playStatus['secondBaseRunner'].LastName;
-                      pdata.team.thirdBaseRunner = sc.playStatus['thirdBaseRunner'].FirstName + ' '+ sc.playStatus['thirdBaseRunner'].LastName;
+                      pdata.team.thirdBaseRunner = sc.playStatus['thirdBaseRunner'].FirstName + ' ' + sc.playStatus['thirdBaseRunner'].LastName;
                     }
                     pdata.team.currentPitcher = sc.playStatus.pitcher['ID'];
-                 } 
+                  }
 
-                  //get runners on base from playStatus
-                  
                 }
                 if (sc.game.homeTeam.Abbreviation === pdata.team.Abbreviation) {
+
+                  pdata.team.homePitcher = pdata.player.FirstName + ' ' + pdata.player.LastName;
                   pdata.team.opponentAbbreviation = sc.game.awayTeam.Abbreviation;
                   pdata.team.opponentScore = sc.awayScore;
                   pdata.team.teamScore = sc.homeScore;
@@ -369,29 +367,23 @@ export class PitchingStatsComponent implements OnInit {
                     pdata.team.strikes = sc.playStatus.strikeCount;
                     pdata.team.outs = sc.playStatus.outCount;
                     if (sc.playStatus['batter'] != null) {
-                     pdata.team.currentBatter = sc.playStatus['batter'].FirstName + ' '+ sc.playStatus['batter'].LastName; 
+                      pdata.team.currentBatter = sc.playStatus['batter'].FirstName + ' ' + sc.playStatus['batter'].LastName;
                     }
                     if (sc.playStatus['firstBaseRunner'] != null) {
-                     pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' '+ sc.playStatus['firstBaseRunner'].LastName; 
-
+                      pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' ' + sc.playStatus['firstBaseRunner'].LastName;
                     }
                     if (sc.playStatus['secondBaseRunner'] != null) {
-                     // pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' '+ sc.playStatus['firstBaseRunner'].LastName; 
-                      pdata.team.secondBaseRunner = sc.playStatus['secondBaseRunner'].FirstName + ' '+ sc.playStatus['secondBaseRunner'].LastName;
-                     // pdata.team.thirdBaseRunner = sc.playStatus['thirdBaseRunner'].FirstName + ' '+ sc.playStatus['thirdBaseRunner'].LastName;
+                      pdata.team.secondBaseRunner = sc.playStatus['secondBaseRunner'].FirstName + ' ' + sc.playStatus['secondBaseRunner'].LastName;
                     }
                     if (sc.playStatus['thirdBaseRunner'] != null) {
-                     // pdata.team.firstBaseRunner = sc.playStatus['firstBaseRunner'].FirstName + ' '+ sc.playStatus['firstBaseRunner'].LastName; 
-                     // pdata.team.secondBaseRunner = sc.playStatus['secondBaseRunner'].FirstName + ' '+ sc.playStatus['secondBaseRunner'].LastName;
-                      pdata.team.thirdBaseRunner = sc.playStatus['thirdBaseRunner'].FirstName + ' '+ sc.playStatus['thirdBaseRunner'].LastName;
+                      pdata.team.thirdBaseRunner = sc.playStatus['thirdBaseRunner'].FirstName + ' ' + sc.playStatus['thirdBaseRunner'].LastName;
                     }
 
-
-                    
                     pdata.team.currentPitcher = sc.playStatus.pitcher['ID'];
-                 }
+                  }
 
                 }
+
               }
             }
           }
@@ -400,13 +392,13 @@ export class PitchingStatsComponent implements OnInit {
             console.log('start sorting data for pictures and other info about player...');
             for (let info of this.playerInfo) {
               for (let data of this.myData) {
-
-                if (data.team.Abbreviation === 'HOU' || data.team.Abbreviation === 'CLE' || data.team.Abbreviation === 'NYY' || data.team.Abbreviation === 'MIN' || data.team.Abbreviation === 'BOS' ) {
-                    data.player.americanLeaguePlayoff = true;
+                
+                if (data.team.Abbreviation === 'HOU' || data.team.Abbreviation === 'CLE' || data.team.Abbreviation === 'NYY' || data.team.Abbreviation === 'MIN' || data.team.Abbreviation === 'BOS') {
+                  data.player.americanLeaguePlayoff = true;
                 }
 
-                if (data.team.Abbreviation === 'LAD' || data.team.Abbreviation === 'WAS' || data.team.Abbreviation === 'CHC' || data.team.Abbreviation === 'ARI' || data.team.Abbreviation === 'COL' ) {
-                    data.player.nationalLeaguePlayoff = true;
+                if (data.team.Abbreviation === 'LAD' || data.team.Abbreviation === 'WAS' || data.team.Abbreviation === 'CHC' || data.team.Abbreviation === 'ARI' || data.team.Abbreviation === 'COL') {
+                  data.player.nationalLeaguePlayoff = true;
                 }
 
                 if (info.player.ID === data.player.ID) {
@@ -421,6 +413,9 @@ export class PitchingStatsComponent implements OnInit {
                   data.player.Height = info.player.Height;
                   data.player.Weight = info.player.Weight;
                   data.player.IsRookie = info.player.IsRookie;
+                  if (data.player.inningsToday == null) {
+                    data.player.inningsToday = '0';
+                  }
 
                   //STAT-DATA IS CALLED IN THE HTML
                   this.statData = this.myData;
@@ -431,14 +426,34 @@ export class PitchingStatsComponent implements OnInit {
 
                 }
 
+
+
               }
             }
+
+
+            //MAKE MATCHUPS BY GAME ID OF STARTERS AND NON STARTERS
+            this.matchupData = this.startersData.reduce(function(r, a) {
+              r[a.team.gameId] = r[a.team.gameId] || [];
+
+              r[a.team.gameId].push(a);
+              return r
+
+            }, Object.create(null));
+            //console.log(this.matchupData, 'made matchups of starting pitchers by game ID...');
+
+            //THIS FOR LOOP GETS HOME STARTING HOCKEY GOALIES AND THERE STARTING OPPONENT 
+            this.startersData.forEach((data) => {
+
+              data.team.matchup = this.matchupData[data.team.gameId];
+              //console.log(this.matchupData[data.team.gameId], 'show this');
+
+            })
 
             this.infoService
               .sendStats(this.statData);
 
           }
-
         }
 
         //THIS FOR LOOP GETS AVG PITCH SPEED FOR EVERY PITCHER IN THIS LIST
@@ -503,7 +518,7 @@ export class PitchingStatsComponent implements OnInit {
   }
 
   public isActive(data) {
-      return this.selected === data;
+    return this.selected === data;
   };
 
   public isVisibleOnMobile() {
@@ -532,9 +547,11 @@ export class PitchingStatsComponent implements OnInit {
       <br> Birth City: {{data.player.city +', '+ data.player.country}}
       <br> Number: {{data.player.JerseyNumber}}
       <br> Opponent: <span *ngIf="data.team.opponent;then content else other_content"></span> <ng-template #content>{{data.team.opponent}}</ng-template> <ng-template #other_content>No game today.</ng-template>
-      <br><span *ngIf="data.player.americanLeaguePlayoff || data.player.nationalLeaguePlayoff" style="background:#2ecc71; color:#fff; padding:1px; border-radius:2px;">{{data.team.City}} made the playoffs. </span>
-      <br><span *ngIf="data.player.startingToday" style="background:#2ecc71; color:#fff; padding:1px; border-radius:2px;">Starter for today's {{data.player.gameLocation}} game. </span>
-      <br><span *ngIf="data.team.opponent">Game info: {{data.player.gameTime}} EST, {{data.team.gameField}} </span> </p>
+      <span *ngIf="data.team.matchup != null && data.player.ID != data.team.matchup[0].player.ID"><br>Pitching Opponent: {{data.team.matchup[0].player.FirstName + ' ' + data.team.matchup[0].player.LastName}}</span>
+      <span *ngIf="data.team.matchup != null && data.player.ID != data.team.matchup[1].player.ID"><br>Pitching Opponent: {{data.team.matchup[1].player.FirstName + ' ' + data.team.matchup[1].player.LastName}}</span>
+      <span *ngIf="data.team.opponent"><br>Game info: {{data.player.gameTime}} EST, {{data.team.gameField}} </span> 
+      <span *ngIf="data.player.americanLeaguePlayoff || data.player.nationalLeaguePlayoff"><br>Playoff Info: {{data.team.City}} made the playoffs. </span>
+      <span *ngIf="data.player.startingToday" style="background:#2ecc71; color:#fff; padding:1px; border-radius:2px;"><br>Starter for today's {{data.player.gameLocation}} game. </span></p>
   </md-grid-tile>
 </md-grid-list>
 <md-grid-list cols="3" rowHeight="50px">
@@ -613,13 +630,14 @@ export class MyDataSource extends DataSource < Data > {
     if (!this.sort.active || this.sort.direction == '') { return data; }
 
     return data.sort((a, b) => {
-      //console.log(a, 'a');
-      //console.log(a, 'b');
+
       let propertyA: number | string = '';
       let propertyB: number | string = '';
 
       switch (this.sort.active) {
-
+        case 'id':
+          [propertyA, propertyB] = [a['player'].inningsToday, b['player'].inningsToday];
+          break;
         case 'pitches':
           [propertyA, propertyB] = [a['stats'].PitchesThrown['#text'], b['stats'].PitchesThrown['#text']];
           break;

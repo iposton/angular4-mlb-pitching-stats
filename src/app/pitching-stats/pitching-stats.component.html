@@ -13,7 +13,7 @@
           The actual rendered columns are set as a property on the row definition" -->
     <!-- Rank Column -->
     <ng-container cdkColumnDef="id">
-      <md-header-cell *cdkHeaderCellDef>
+      <md-header-cell *cdkHeaderCellDef md-sort-header>
         Rank <span *ngIf="gamesToday || live" class="live-case">( </span><span class="live-case" *ngIf="dailyStats != undefined || live">live stats </span>
         <div class="live-dot" *ngIf="dailyStats != undefined || live"></div>
         <span *ngIf="gamesToday || live" class="live-case">starting </span>

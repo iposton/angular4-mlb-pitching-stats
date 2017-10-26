@@ -44,7 +44,7 @@ export class InfoService {
     if (!this.schedule) {
       console.log('getting stat data from API...');
 
-      let url5 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/daily_game_schedule.json?fordate='+dailyDate;
+      let url5 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/daily_game_schedule.json?fordate=20171024';
       this.schedule = this.http.get(url5, options)
         .map(response => response.json())
     }
@@ -117,7 +117,7 @@ export class InfoService {
   getDaily() {
 
     if (!this.daily) {
-      let url4 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/daily_player_stats.json?fordate='+dailyDate+'&position=P';
+      let url4 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/daily_player_stats.json?fordate=20171024&position=P';
       console.log('getting daily stats for pitchers from API...');
       this.daily = this.http.get(url4, options)
         .map(response => response.json())
@@ -128,7 +128,7 @@ export class InfoService {
   getScore() {
 
     if (!this.score) {
-      let url5 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/scoreboard.json?fordate='+dailyDate;
+      let url5 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/scoreboard.json?fordate=20171024';
       console.log('getting daily scores of todays games from API...');
       this.score = this.http.get(url5, options)
         .map(response => response.json())
@@ -136,14 +136,4 @@ export class InfoService {
     return this.score;
   }
 
-  getPlay() {
-
-    if (!this.play) {
-      let url6 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/game_playbyplay.json?gameid=20171004-COL-ARI;'
-      console.log('getting daily scores of todays games from API...');
-      this.play = this.http.get(url6, options)
-        .map(response => response.json())
-    }
-    return this.play;
-  }
 }
