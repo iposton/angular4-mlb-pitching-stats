@@ -45,6 +45,7 @@ export class PitchingStatsComponent implements OnInit {
   live: boolean = false;
   gamesToday: boolean = false;
   noGamesToday: boolean = false;
+  gameToday: boolean = false;
   selected: any;
   scrollHeight: any;
   scrollTop: any;
@@ -174,6 +175,7 @@ export class PitchingStatsComponent implements OnInit {
                       i2 = index;
                       if (res2[i2].expected === null) {
                         console.log(res2[i2], 'starter is NULL in here. ERROR.');
+                        this.starterIdData.push(res2[i2].team['ID']);
                       } else {
                         //console.log(res2[i2].expected.starter[0].player.ID, 'got player ID!');
                         this.starterIdData.push(res2[i2].expected.starter[0].player.ID);
@@ -243,6 +245,11 @@ export class PitchingStatsComponent implements OnInit {
 
                 if (startid === startdata.player.ID) {
                   startdata.player.startingToday = true;
+                }
+
+                if (startid === startdata.team.ID) {
+                  startdata.team.teamPlayingToday = true;
+                  this.gameToday = true;
                 } 
               }
             }

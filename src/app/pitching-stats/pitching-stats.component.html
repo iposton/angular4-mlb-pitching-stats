@@ -6,6 +6,7 @@
 <md-toolbar color="primary" *ngIf="!loading">
   <span>MLB Pitching Stats</span>
   <span class="example-spacer"></span>
+  <span *ngIf="gameToday === true">There is a game today but the starters have not been updated by the API...</span>
 </md-toolbar>
 <div id="exampleContainer" class="example-container example-container-fixed mat-elevation-z8">
   <md-table #table [dataSource]="dataSource" mdSort>
