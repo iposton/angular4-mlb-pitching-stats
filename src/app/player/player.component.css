@@ -41,6 +41,10 @@ md-spinner {
   margin: 0 auto;
 }
 
+.score-img img {
+  width: 12%;
+}
+
 @media only screen and (max-width: 900px) { 
  md-card-title img {
   width: 15%;

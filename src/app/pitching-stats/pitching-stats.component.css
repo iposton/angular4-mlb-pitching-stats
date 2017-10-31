@@ -137,6 +137,10 @@ md-spinner {
   margin: 0 auto;
 }
 
+.table-img img {
+  width: 8%;
+}
+
 
 
 @media only screen and (max-width: 900px) {
