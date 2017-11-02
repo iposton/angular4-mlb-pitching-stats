@@ -4,7 +4,7 @@
   <md-spinner></md-spinner>
 </div>
 <md-card *ngIf="!loading" [ngClass]="loading ? 'loading' : 'notLoading'">
-  <md-card-title><img src="{{ selectedPlayer.player.image }}">
+  <md-card-title><span class="player-img"><img src="{{ selectedPlayer.player.image }}"></span> 
   {{ selectedPlayer.player.FirstName + ' ' + selectedPlayer.player.LastName + ' (' + selectedPlayer.team.Name + ' - ' + selectedPlayer.player.Position + ')'}}</md-card-title>
 
   <md-card-subtitle *ngIf="selectedPlayer.team.isGameInProgress === 'true'"> <span class="score-img"><img src="../assets/mlb-logos/{{selectedPlayer.team.ID}}.png" alt=""></span> {{ selectedPlayer.team.teamScore }} <span class="score-img"><img src="../assets/mlb-logos/{{selectedPlayer.team.opponentId}}.png" alt=""></span>{{ selectedPlayer.team.opponentScore }} | <span *ngIf="selectedPlayer.team.currentInningHalf === 'top';then up else down"></span><ng-template #up><md-icon style="color: red;">arrow_drop_up</md-icon></ng-template><ng-template #down><md-icon style="color: red;">arrow_drop_down</md-icon></ng-template> {{ selectedPlayer.team.currentInning }} inning - {{selectedPlayer.team.outs}} <span *ngIf="selectedPlayer.team.outs === '1';then out else outs"></span><ng-template #out>Out</ng-template> <ng-template #outs>Outs</ng-template> {{selectedPlayer.team.balls}} <span *ngIf="selectedPlayer.team.balls === '1';then ball else balls"></span><ng-template #ball>Ball</ng-template> <ng-template #balls>Balls</ng-template>  {{selectedPlayer.team.strikes}} <span *ngIf="selectedPlayer.team.strikes === '1';then strike else strikes"></span><ng-template #strike>Strike</ng-template> <ng-template #strikes>Strikes</ng-template></md-card-subtitle>
