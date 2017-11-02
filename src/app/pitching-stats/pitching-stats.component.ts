@@ -282,6 +282,7 @@ export class PitchingStatsComponent implements OnInit {
                   sdata.player.gameLocation = "away";
                   sdata.team.opponent = schedule.homeTeam.City + ' ' + schedule.homeTeam.Name;
                   sdata.team.opponentCity = schedule.homeTeam.City;
+                  sdata.team.opponentId = schedule.homeTeam.ID;
 
                 }
                 if (schedule.homeTeam.Name === sdata.team.Name) {
@@ -291,6 +292,7 @@ export class PitchingStatsComponent implements OnInit {
                   sdata.player.gameLocation = "home";
                   sdata.team.opponent = schedule.awayTeam.City + ' ' + schedule.awayTeam.Name;
                   sdata.team.opponentCity = schedule.awayTeam.City;
+                  sdata.team.opponentId = schedule.awayTeam.ID;
                 }
               }
             }
