@@ -47,7 +47,7 @@ import { CdkTableModule } from '@angular/cdk';
 
 import { AppComponent } from './app.component';
 import { OrderBy } from './orderby.pipe';
-import {InfoService} from './info.service';
+import { InfoService } from './info.service';
 
 import { FirebaseService } from './firebase.service';
 import { AngularFireModule } from 'angularfire2';

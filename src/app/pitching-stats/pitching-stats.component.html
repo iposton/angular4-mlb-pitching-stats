@@ -1,3 +1,8 @@
+<!--  <div class="example-header">
+    
+      <input mdInput #filter placeholder="Filter users">
+   
+  </div> -->
 <!--The content below is only a placeholder and can be replaced.-->
 <div class="spinner-msg" *ngIf="loading">
   Retrieving pitching data...
@@ -9,6 +14,8 @@
   <span *ngIf="gameToday === true">There is a game today but the starters have not been updated by the API...</span>
 </md-toolbar>
 <div id="exampleContainer" class="example-container example-container-fixed mat-elevation-z8">
+  <div class="example-container mat-elevation-z8">
+ 
   <md-table #table [dataSource]="dataSource" mdSort>
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
@@ -83,4 +90,7 @@
     <md-row [ngClass]="{'active': isActive(data), 'margin': i === 0}" (click)="open($event, data)" *cdkRowDef="let data; columns: displayedColumns; let i=index;"></md-row>
   </md-table>
 </div>
+
+
+
 

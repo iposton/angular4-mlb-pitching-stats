@@ -1,5 +1,6 @@
-import { Component, ViewChild, Inject, OnInit } from '@angular/core';
+import { Component, ViewChild, Inject, OnInit, ElementRef } from '@angular/core';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import { DataSource } from '@angular/cdk';
 import { MdSort } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
@@ -12,6 +13,10 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/publishReplay';
 import 'rxjs/add/observable/forkJoin';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
+import 'rxjs/add/observable/fromEvent';
+
 
 let headers = null;
 let options = null;
@@ -24,6 +29,8 @@ export interface Data {}
   styleUrls: ['./pitching-stats.component.css']
 })
 export class PitchingStatsComponent implements OnInit {
+
+
 
   title = 'app';
   players: Array < any > ;
@@ -67,6 +74,7 @@ export class PitchingStatsComponent implements OnInit {
   pitcherspeed: { pitcher: string, pitchspeedStart: string, lastName: string };
 
   @ViewChild(MdSort) sort: MdSort;
+  //@ViewChild('filter') filter: ElementRef;
 
   constructor(public dialog: MdDialog, private infoService: InfoService, private firebaseService: FirebaseService, private http: Http) {
     this.players = this.infoService.getSentStats();
@@ -431,6 +439,7 @@ export class PitchingStatsComponent implements OnInit {
 
                   //This fills the table with data
                   this.dataSource = new MyDataSource(this.statData, this.sort);
+                  //this.dataSource = new MyDataSource(this.statData);
 
 
                 }
@@ -499,10 +508,18 @@ export class PitchingStatsComponent implements OnInit {
     // AVOID LONG RELOADING TIME
     if (this.players === undefined) {
       this.loadEnv();
+      // Observable.fromEvent(this.filter.nativeElement, 'keyup')
+      //   .debounceTime(150)
+      //   .distinctUntilChanged()
+      //   .subscribe(() => {
+      //     if (!this.dataSource) { return; }
+      //     this.dataSource.filter = this.filter.nativeElement.value;
+      //   });
     } else {
 
       //This fills the table with data
       this.dataSource = new MyDataSource(this.players, this.sort);
+      //this.dataSource = new MyDataSource(this.players);
 
       setInterval(() => {
         this.loading = false;
@@ -610,6 +627,40 @@ export class MyDialog {
   constructor(public dialogRef: MdDialogRef < MyDialog > , @Inject(MD_DIALOG_DATA) public data: any) {}
 }
 
+// export class MyDataSource extends DataSource < Data > {
+
+//    _filterChange = new BehaviorSubject('');
+//   get filter(): string { return this._filterChange.value; }
+//   set filter(filter: string) { this._filterChange.next(filter); }
+
+//   constructor(private datas: Data[]) {
+
+//     super();
+//   }
+
+
+
+//   /** Connect function called by the table to retrieve one stream containing the data to render. */
+//   connect(): Observable < Data[] > {
+//    const displayDataChanges = [
+//       //this.datas.dataChange,
+//       this._filterChange
+//     ];
+
+//     return Observable.merge(...displayDataChanges).map(() => {
+//       return this.datas.slice().filter((item: Data) => {
+//         let searchStr = (item['player'].FirstName).toLowerCase();
+//         return searchStr.indexOf(this.filter.toLowerCase()) != -1;
+//       });
+//     });
+//   }
+
+//   disconnect() {}
+
+ 
+
+// }
+
 export class MyDataSource extends DataSource < Data > {
 
   constructor(private datas: Data[], private sort: MdSort) {
@@ -680,3 +731,5 @@ export class MyDataSource extends DataSource < Data > {
   }
 
 }
+
+
