@@ -31,8 +31,7 @@ heroku.request({
 })
 
 app.get('/heroku-env', (req, res) => {
-        res.write(TOKEN);
-        res.end();
+       res.json(TOKEN);
 });
 
 

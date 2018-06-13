@@ -85,7 +85,7 @@ export class PlayerComponent implements OnInit {
     }
          this.infoService.getEnv().subscribe(res => {
         
-        headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + res._body) });
+        headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + res._body.replace(/['"]+/g, '')) });
         options = new RequestOptions({ headers: headers });
          //this.infoService
           //.sendHeaderOptions(headers, options);
@@ -99,7 +99,7 @@ export class PlayerComponent implements OnInit {
      
          this.infoService.getEnv().subscribe(res => {
         
-        headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + res._body) });
+        headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + res._body.replace(/['"]+/g, '')) });
         options = new RequestOptions({ headers: headers });
          this.infoService
           .sendHeaderOptions(headers, options);
@@ -117,7 +117,7 @@ export class PlayerComponent implements OnInit {
               Observable.forkJoin(
                   res['dailygameschedule'].gameentry.map(
                     g =>
-                    this.http.get('https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/game_startinglineup.json?gameid=' + g.id + '&position=P', options)
+                    this.http.get('https://api.mysportsfeeds.com/v1.2/pull/mlb/2018-regular/game_startinglineup.json?gameid=' + g.id + '&position=P', options)
                     .map(response => response.json())
                   )
                 )
@@ -357,13 +357,13 @@ export class PlayerComponent implements OnInit {
             for (let info of this.playerInfo) {
               for (let data of this.myData) {
                 
-                if (data.team.Abbreviation === 'HOU' || data.team.Abbreviation === 'CLE' || data.team.Abbreviation === 'NYY' || data.team.Abbreviation === 'MIN' || data.team.Abbreviation === 'BOS') {
-                  data.player.americanLeaguePlayoff = true;
-                }
+                // if (data.team.Abbreviation === 'HOU' || data.team.Abbreviation === 'CLE' || data.team.Abbreviation === 'NYY' || data.team.Abbreviation === 'MIN' || data.team.Abbreviation === 'BOS') {
+                //   data.player.americanLeaguePlayoff = true;
+                // }
 
-                if (data.team.Abbreviation === 'LAD' || data.team.Abbreviation === 'WAS' || data.team.Abbreviation === 'CHC' || data.team.Abbreviation === 'ARI' || data.team.Abbreviation === 'COL') {
-                  data.player.nationalLeaguePlayoff = true;
-                }
+                // if (data.team.Abbreviation === 'LAD' || data.team.Abbreviation === 'WAS' || data.team.Abbreviation === 'CHC' || data.team.Abbreviation === 'ARI' || data.team.Abbreviation === 'COL') {
+                //   data.player.nationalLeaguePlayoff = true;
+                // }
 
                 if (info.player.ID === data.player.ID) {
                   if (data.stats.Pitcher2SeamFastballs && data.stats.Pitcher4SeamFastballs && data.stats.PitcherChangeups && data.stats.PitcherCurveballs && data.stats.PitcherCutters && data.stats.PitcherSliders && data.stats.PitcherSinkers && data.stats.PitcherSplitters) {
@@ -445,7 +445,7 @@ export class PlayerComponent implements OnInit {
     }
 
      this.infoService.getEnv().subscribe(res => {
-        this.defineToken = res._body;
+        this.defineToken = res._body.replace(/['"]+/g, '');
         headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + this.defineToken) });
         options = new RequestOptions({ headers: headers });
         this.loadData();
@@ -453,7 +453,7 @@ export class PlayerComponent implements OnInit {
   }
  
  loadData(){
-   let url6 = 'https://api.mysportsfeeds.com/v1.1/pull/mlb/2017-playoff/game_playbyplay.json?gameid='+this.gameId;
+   let url6 = 'https://api.mysportsfeeds.com/v1.2/pull/mlb/2018-regular/game_playbyplay.json?gameid='+this.gameId;
       console.log('getting play-by-play for this game from API...');
       this.http.get(url6, options)
         .map(response => response.json())

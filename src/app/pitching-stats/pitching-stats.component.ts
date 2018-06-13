@@ -30,9 +30,6 @@ export interface Data {}
 })
 export class PitchingStatsComponent implements OnInit {
 
-
-
-  title = 'app';
   players: Array < any > ;
   myData: Array < any > ;
   playerInfo: Array < any > ;
@@ -57,7 +54,6 @@ export class PitchingStatsComponent implements OnInit {
   scrollHeight: any;
   scrollTop: any;
   stat: string = '';
-  defineToken: string = '';
   displayedColumns = [
     'id',
     'pitches',
@@ -84,76 +80,12 @@ export class PitchingStatsComponent implements OnInit {
 // LOAD SOME DATA WHEN CLICK ON DIALOG TO SAVE LOADING TIME. 
     this.infoService
       .getEnv().subscribe(res => {
-        this.defineToken = res._body;
-        headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + this.defineToken) });
+        
+        headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + res._body.replace(/['"]+/g, '')) });
         options = new RequestOptions({ headers: headers });
         this.infoService
           .sendHeaderOptions(headers, options);
-        //this.loadData(this.defineToken);
-
-        //// let headers = new Headers({ "Authorization": "Basic " + btoa('ianposton' + ":" + this.defineToken) });
-        // let options = new RequestOptions({ headers: headers });
-
-        //THESE FUNCTIONS WORK TOGETHER TO MAKE MULTIPLE API CALLS AND PUSH IT ALL TO FIREBASE
-      //   this.infoService
-      //     .getGameId().subscribe(res => {
-      //       console.log(res, 'gameID data!');
-      //       //THIS CHUNK MAKES MULTIPLE API CALLS AND SAVES LARGE CHUNKS OF DATA TO FIREBASE
-      //       Observable.forkJoin(
-      //         res['fullgameschedule'].gameentry.map(
-      //           g =>
-      //           this.http.get('https://api.mysportsfeeds.com/v1.2/pull/mlb/2018-regular/game_playbyplay.json?gameid=' + g.id + '&status=final', options)
-      //           .map(response => response.json())
-      //         )
-      //       ).subscribe(res => {
-      //         let i;
-      //         let i2;
-      //         res.forEach((item, index) => {
-      //           i = index;
-      //           console.log(res[i]['gameplaybyplay'], 'got game data!');
-
-      // if(res[i]['gameplaybyplay'].atBats != null) {
-
-      //   res[i]['gameplaybyplay'].atBats.atBat.forEach((item2, index) => {
-      //       i2 = index;
-      //       //console.log(item2.atBatPlay, 'atbatplay items...');
-      //       item2.atBatPlay.forEach((item3, index) => {
-      //         let f = item3;
-
-      //         if (f.pitch != undefined && f.pitch.ballStartSpeed != undefined) {
-      //           //console.log(f.pitch);
-      //           this.pitcherspeed = {
-      //             pitcher: f.pitch.pitchingPlayer.ID,
-      //             pitchspeedStart: f.pitch.ballStartSpeed,
-      //             lastName: f.pitch.pitchingPlayer.LastName,
-      //           }
-      //           this.specificFastballData.push(this.pitcherspeed);
-
-      //         }
-
-      //       })
-
-
-      //     })
-
-      //     this.speedResults = this.specificFastballData.reduce(function(r, a) {
-      //       r[a.pitcher] = r[a.pitcher] || [];
-      //       r[a.pitcher].push(a.pitchspeedStart);
-      //       return r
-      //     }, Object.create(null));
-      //     console.log('made groups of pichers pitch speeds by ID...');
-
-      // }
-          
-
-
-
-      //         });
-
-
-      //       });
-      //            this.loadData();
-      //     });
+        
 
         this.infoService
           .getDailySchedule().subscribe(res => {
@@ -496,30 +428,7 @@ export class PitchingStatsComponent implements OnInit {
           }
         }
 
-        //THIS FOR LOOP GETS AVG PITCH SPEED FOR EVERY PITCHER IN THIS LIST
-        // this.myData.forEach((data, index) => {
-           
-
-        //   if (this.speedResults[data.player.ID]) {
-        //     let avg =  this.speedResults[data.player.ID].reduce((r, a) => {
-
-        //       return r + parseInt(a);
-
-        //     }, 0) /  this.speedResults[data.player.ID].length;
-
-        //     let max = this.speedResults[data.player.ID].reduce(function(a, b) {
-        //         return Math.max(a, b);
-        //     });
-
-        //     data.player.pitchSpeedAvg = Math.floor(avg);
-        //     data.player.fastestPitch = max;
-        //     //console.log(data.player, 'average pitch speed about to save to fb....');
-        //     this.firebaseService
-        //       .addData(data.player);
-
-        //   }
-
-        // });
+    
 
         this.loading = false;
       });
